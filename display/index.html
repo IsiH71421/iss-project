@@ -39,63 +39,59 @@
   <h1>Next ISS Pass Over Garching</h1>
   <div id="countdown">Loading countdown...</div>
   <div id="final-message"></div>
+
+  <p><strong>Scan the QR Code to choose the ISS information that you want to see.</strong></p>
   <img src="../assets/qr_code.png" alt="Scan QR Code to control" width="200">
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const countdownTimestamp = parseInt(urlParams.get('countdown')) * 1000;
+    const startTimestamp = parseInt(urlParams.get('start')) * 1000;
+    const endTimestamp = parseInt(urlParams.get('end')) * 1000;
+    const durationSeconds = Math.floor((endTimestamp - startTimestamp) / 1000);
 
-    function updateCountdown() {
-      const now = Date.now(); // <-- Use UTC milliseconds
-      const diff = countdownTimestamp - now;
+    const countdownEl = document.getElementById('countdown');
+    const finalMessageEl = document.getElementById('final-message');
 
-      const countdownEl = document.getElementById('countdown');
-      const finalMessageEl = document.getElementById('final-message');
-
-      if (diff < 0) {
-        countdownEl.textContent = "ISS is passing now!";
-        countdownEl.classList.remove("alert");
-        finalMessageEl.textContent = "";
-        return;
-      }
-
-      const totalSeconds = Math.floor(diff / 1000);
-      const days = Math.floor(totalSeconds / (3600 * 24));
-      const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-      const mins = Math.floor((totalSeconds % 3600) / 60);
-      const secs = totalSeconds % 60;
+    function formatTime(secondsTotal) {
+      const days = Math.floor(secondsTotal / (3600 * 24));
+      const hours = Math.floor((secondsTotal % (3600 * 24)) / 3600);
+      const mins = Math.floor((secondsTotal % 3600) / 60);
+      const secs = secondsTotal % 60;
 
       let parts = [];
-      if (days > 0) {
-        parts.push(`${days} day${days !== 1 ? 's' : ''}`);
-        parts.push(`${hours} hour${hours !== 1 ? 's' : ''}`);
-        parts.push(`${mins} minute${mins !== 1 ? 's' : ''}`);
-      } else if (hours > 0) {
-        parts.push(`${hours} hour${hours !== 1 ? 's' : ''}`);
-        parts.push(`${mins} minute${mins !== 1 ? 's' : ''}`);
-      } else if (mins > 0) {
-        parts.push(`${mins} minute${mins !== 1 ? 's' : ''}`);
-      }
+      if (days > 0) parts.push(`${days} day${days !== 1 ? 's' : ''}`);
+      if (hours > 0) parts.push(`${hours} hour${hours !== 1 ? 's' : ''}`);
+      if (mins > 0) parts.push(`${mins} minute${mins !== 1 ? 's' : ''}`);
       parts.push(`${secs} second${secs !== 1 ? 's' : ''}`);
 
-      let finalText = "";
-      if (parts.length === 1) {
-        finalText = parts[0];
-      } else if (parts.length === 2) {
-        finalText = parts[0] + " and " + parts[1];
-      } else {
-        finalText = parts.slice(0, -1).join(", ") + ", and " + parts[parts.length - 1];
-      }
+      if (parts.length === 1) return parts[0];
+      if (parts.length === 2) return parts[0] + " and " + parts[1];
+      return parts.slice(0, -1).join(", ") + ", and " + parts[parts.length - 1];
+    }
 
-      countdownEl.textContent = `Next pass in ${finalText}`;
+    function updateCountdown() {
+      const now = Date.now();
 
-      // Highlight final minute
-      if (totalSeconds <= 60) {
+      if (now < startTimestamp) {
+        const diff = Math.floor((startTimestamp - now) / 1000);
+        countdownEl.textContent = `Next pass in ${formatTime(diff)} (Duration: ${formatTime(durationSeconds)})`;
+
+        if (diff <= 60) {
+          countdownEl.classList.add("alert");
+          finalMessageEl.textContent = "🚀 ISS is coming NOW!";
+        } else {
+          countdownEl.classList.remove("alert");
+          finalMessageEl.textContent = "";
+        }
+      } else if (now >= startTimestamp && now < endTimestamp) {
+        const remaining = Math.floor((endTimestamp - now) / 1000);
+        countdownEl.textContent = `👀 ISS is visible! Time left: ${formatTime(remaining)}`;
         countdownEl.classList.add("alert");
-        finalMessageEl.textContent = "🚀 ISS is coming NOW!";
+        finalMessageEl.textContent = "Don't miss it!";
       } else {
+        countdownEl.textContent = "";
         countdownEl.classList.remove("alert");
-        finalMessageEl.textContent = "";
+        finalMessageEl.textContent = "The ISS is gone. Did you take some nice pictures?";
       }
     }
 
