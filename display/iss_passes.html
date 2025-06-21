@@ -1,0 +1,19 @@
+<!-- iss_passes.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Upcoming ISS Passes</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <h1>ISS Passes Over Garching</h1>
+  <div id="passes">Loading...</div>
+  <script>
+    // CPEE injects a list of timestamps (JSON), e.g., via URL params or a JS file
+    const passes = JSON.parse(/* injected data */);
+    document.getElementById('passes').innerHTML = 
+      passes.map(p => `<p>${new Date(p * 1000).toLocaleString()}</p>`).join('');
+  </script>
+</body>
+</html>

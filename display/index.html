@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Next ISS Overpass</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <h1>Next ISS Pass Over Garching</h1>
+  <div id="countdown">Loading countdown...</div>
+  <img src="../assets/qr_code.png" alt="Scan QR Code to control" width="200">
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const countdownTime = new Date(parseInt(urlParams.get('countdown')) * 1000);
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = countdownTime - now;
+      if (diff < 0) {
+        document.getElementById('countdown').textContent = "ISS is passing now!";
+        return;
+      }
+      const mins = Math.floor(diff / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+      document.getElementById('countdown').textContent = 
+        `Next pass in ${mins} minutes and ${secs} seconds`;
+    }
+
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
