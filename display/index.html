@@ -9,24 +9,56 @@
   <h1>Next ISS Pass Over Garching</h1>
   <div id="countdown">Loading countdown...</div>
   <img src="../assets/qr_code.png" alt="Scan QR Code to control" width="200">
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const countdownTime = new Date(parseInt(urlParams.get('countdown')) * 1000);
+ <script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const countdownTime = new Date(parseInt(urlParams.get('countdown')) * 1000);
 
-    function updateCountdown() {
-      const now = new Date();
-      const diff = countdownTime - now;
-      if (diff < 0) {
-        document.getElementById('countdown').textContent = "ISS is passing now!";
-        return;
-      }
-      const mins = Math.floor(diff / 60000);
-      const secs = Math.floor((diff % 60000) / 1000);
-      document.getElementById('countdown').textContent = 
-        `Next pass in ${mins} minutes and ${secs} seconds`;
+  function updateCountdown() {
+    const now = new Date();
+    const diff = countdownTime - now;
+
+    if (diff < 0) {
+      document.getElementById('countdown').textContent = "ISS is passing now!";
+      return;
     }
 
-    setInterval(updateCountdown, 1000);
-  </script>
+    const totalSeconds = Math.floor(diff / 1000);
+    const days = Math.floor(totalSeconds / (3600 * 24));
+    const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+    const mins = Math.floor((totalSeconds % 3600) / 60);
+    const secs = totalSeconds % 60;
+
+    let parts = [];
+
+    if (days > 0) {
+      parts.push(`${days} day${days !== 1 ? 's' : ''}`);
+      parts.push(`${hours} hour${hours !== 1 ? 's' : ''}`);
+      parts.push(`${mins} minute${mins !== 1 ? 's' : ''}`);
+    } else if (hours > 0) {
+      parts.push(`${hours} hour${hours !== 1 ? 's' : ''}`);
+      parts.push(`${mins} minute${mins !== 1 ? 's' : ''}`);
+    } else if (mins > 0) {
+      parts.push(`${mins} minute${mins !== 1 ? 's' : ''}`);
+    }
+
+    parts.push(`${secs} second${secs !== 1 ? 's' : ''}`);
+
+    // Combine with commas and "and"
+    let finalText = "";
+    if (parts.length === 1) {
+      finalText = parts[0];
+    } else if (parts.length === 2) {
+      finalText = parts[0] + " and " + parts[1];
+    } else {
+      finalText = parts.slice(0, -1).join(", ") + ", and " + parts[parts.length - 1];
+    }
+
+    document.getElementById('countdown').textContent =
+      `Next pass in ${finalText}`;
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>
 </body>
 </html>
