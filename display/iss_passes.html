@@ -1,19 +1,113 @@
-<!-- iss_passes.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Upcoming ISS Passes</title>
-  <link rel="stylesheet" href="../assets/style.css">
+  <meta charset="UTF-8" />
+  <title>ISS Passes in the Next 7 Days</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f0f0f0;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+    }
+    .pass {
+      background: white;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 0 5px #ccc;
+    }
+    .countdown {
+      font-weight: bold;
+      color: #007700;
+    }
+  </style>
 </head>
 <body>
-  <h1>ISS Passes Over Garching</h1>
-  <div id="passes">Loading...</div>
+  <h1>ISS Passes in the Next 7 Days</h1>
+  <div id="passes"></div>
+
   <script>
-    // CPEE injects a list of timestamps (JSON), e.g., via URL params or a JS file
-    const passes = JSON.parse(/* injected data */);
-    document.getElementById('passes').innerHTML = 
-      passes.map(p => `<p>${new Date(p * 1000).toLocaleString()}</p>`).join('');
+    function formatDuration(seconds) {
+      const days = Math.floor(seconds / (3600 * 24));
+      const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+
+      let parts = [];
+      if (days > 0) parts.push(days + ' day' + (days > 1 ? 's' : ''));
+      if (days > 0 || hours > 0) parts.push(hours + ' hour' + (hours !== 1 ? 's' : ''));
+      if (days > 0 || hours > 0 || minutes > 0) parts.push(minutes + ' minute' + (minutes !== 1 ? 's' : ''));
+      parts.push(secs + ' second' + (secs !== 1 ? 's' : ''));
+
+      if(parts.length === 1) return parts[0];
+      if(parts.length === 2) return parts[0] + ' and ' + parts[1];
+      return parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1];
+    }
+
+    function updateCountdowns() {
+      const now = Date.now();
+      document.querySelectorAll('.pass').forEach(div => {
+        const start = parseInt(div.dataset.start) * 1000;
+        const end = parseInt(div.dataset.end) * 1000;
+
+        let text;
+        if(now < start) {
+          const diff = Math.floor((start - now) / 1000);
+          text = 'Next pass in ' + formatDuration(diff) + '. <br>ISS will be visible for ' + formatDuration(Math.floor((end - start) / 1000)) + '.';
+        } else if (now >= start && now <= end) {
+          const diff = Math.floor((end - now) / 1000);
+          text = 'Pass in progress, ends in ' + formatDuration(diff) + '.';
+        } else {
+          text = 'Pass finished. Did you take cool pictures?';
+        }
+        div.querySelector('.countdown').innerHTML = text;
+      });
+    }
+
+    // Read query parameters
+    const params = new URLSearchParams(window.location.search);
+
+    let passes = [];
+    let i = 1;
+    while(params.has('start' + i) && params.has('end' + i)) {
+      passes.push({
+        start: parseInt(params.get('start' + i), 10),
+        end: parseInt(params.get('end' + i), 10)
+      });
+      i++;
+    }
+
+    const container = document.getElementById('passes');
+
+    if(passes.length === 0) {
+      container.textContent = 'No passes found in the next 7 days.';
+    } else {
+      passes.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'pass';
+        div.dataset.start = p.start;
+        div.dataset.end = p.end;
+
+        const startDate = new Date(p.start * 1000);
+        const endDate = new Date(p.end * 1000);
+
+        div.innerHTML = `
+          <div>Start: ${startDate.toLocaleString('en-US')}</div>
+          <div>End: ${endDate.toLocaleString('en-US')}</div>
+          <div class="countdown">Loading countdown...</div>
+        `;
+
+        container.appendChild(div);
+      });
+    }
+
+    updateCountdowns();
+    setInterval(updateCountdowns, 1000);
   </script>
 </body>
 </html>
