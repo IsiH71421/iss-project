@@ -4,61 +4,103 @@
   <meta charset="UTF-8">
   <title>Next ISS Overpass</title>
   <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f0f0f0;
+      text-align: center;
+      padding-top: 2rem;
+    }
+
+    #countdown {
+      font-size: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    #countdown.alert {
+      animation: blink 1s step-start infinite;
+      color: red;
+      font-weight: bold;
+    }
+
+    #final-message {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      color: green;
+      font-weight: bold;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+  </style>
 </head>
 <body>
   <h1>Next ISS Pass Over Garching</h1>
   <div id="countdown">Loading countdown...</div>
+  <div id="final-message"></div>
   <img src="../assets/qr_code.png" alt="Scan QR Code to control" width="200">
- <script>
-  const urlParams = new URLSearchParams(window.location.search);
-  const countdownTime = new Date(parseInt(urlParams.get('countdown')) * 1000);
 
-  function updateCountdown() {
-    const now = new Date();
-    const diff = countdownTime - now;
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const countdownTimestamp = parseInt(urlParams.get('countdown')) * 1000;
 
-    if (diff < 0) {
-      document.getElementById('countdown').textContent = "ISS is passing now!";
-      return;
+    function updateCountdown() {
+      const now = Date.now(); // <-- Use UTC milliseconds
+      const diff = countdownTimestamp - now;
+
+      const countdownEl = document.getElementById('countdown');
+      const finalMessageEl = document.getElementById('final-message');
+
+      if (diff < 0) {
+        countdownEl.textContent = "ISS is passing now!";
+        countdownEl.classList.remove("alert");
+        finalMessageEl.textContent = "";
+        return;
+      }
+
+      const totalSeconds = Math.floor(diff / 1000);
+      const days = Math.floor(totalSeconds / (3600 * 24));
+      const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+      const mins = Math.floor((totalSeconds % 3600) / 60);
+      const secs = totalSeconds % 60;
+
+      let parts = [];
+      if (days > 0) {
+        parts.push(`${days} day${days !== 1 ? 's' : ''}`);
+        parts.push(`${hours} hour${hours !== 1 ? 's' : ''}`);
+        parts.push(`${mins} minute${mins !== 1 ? 's' : ''}`);
+      } else if (hours > 0) {
+        parts.push(`${hours} hour${hours !== 1 ? 's' : ''}`);
+        parts.push(`${mins} minute${mins !== 1 ? 's' : ''}`);
+      } else if (mins > 0) {
+        parts.push(`${mins} minute${mins !== 1 ? 's' : ''}`);
+      }
+      parts.push(`${secs} second${secs !== 1 ? 's' : ''}`);
+
+      let finalText = "";
+      if (parts.length === 1) {
+        finalText = parts[0];
+      } else if (parts.length === 2) {
+        finalText = parts[0] + " and " + parts[1];
+      } else {
+        finalText = parts.slice(0, -1).join(", ") + ", and " + parts[parts.length - 1];
+      }
+
+      countdownEl.textContent = `Next pass in ${finalText}`;
+
+      // Highlight final minute
+      if (totalSeconds <= 60) {
+        countdownEl.classList.add("alert");
+        finalMessageEl.textContent = "🚀 ISS is coming NOW!";
+      } else {
+        countdownEl.classList.remove("alert");
+        finalMessageEl.textContent = "";
+      }
     }
 
-    const totalSeconds = Math.floor(diff / 1000);
-    const days = Math.floor(totalSeconds / (3600 * 24));
-    const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-    const mins = Math.floor((totalSeconds % 3600) / 60);
-    const secs = totalSeconds % 60;
-
-    let parts = [];
-
-    if (days > 0) {
-      parts.push(`${days} day${days !== 1 ? 's' : ''}`);
-      parts.push(`${hours} hour${hours !== 1 ? 's' : ''}`);
-      parts.push(`${mins} minute${mins !== 1 ? 's' : ''}`);
-    } else if (hours > 0) {
-      parts.push(`${hours} hour${hours !== 1 ? 's' : ''}`);
-      parts.push(`${mins} minute${mins !== 1 ? 's' : ''}`);
-    } else if (mins > 0) {
-      parts.push(`${mins} minute${mins !== 1 ? 's' : ''}`);
-    }
-
-    parts.push(`${secs} second${secs !== 1 ? 's' : ''}`);
-
-    // Combine with commas and "and"
-    let finalText = "";
-    if (parts.length === 1) {
-      finalText = parts[0];
-    } else if (parts.length === 2) {
-      finalText = parts[0] + " and " + parts[1];
-    } else {
-      finalText = parts.slice(0, -1).join(", ") + ", and " + parts[parts.length - 1];
-    }
-
-    document.getElementById('countdown').textContent =
-      `Next pass in ${finalText}`;
-  }
-
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
-</script>
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
 </body>
 </html>
