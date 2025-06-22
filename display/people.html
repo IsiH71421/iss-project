@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head><title>People on the ISS</title></head>
+<body>
+  <h1>Currently on the ISS:</h1>
+  <ul id="crew"></ul>
+
+  <script>
+    function getCrewFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      const crewParam = params.get('crew'); // z. B. "Oleg Kononenko|Tracy Caldwell Dyson"
+      if (!crewParam) return [];
+
+      return crewParam.split('|').map(name => ({ name }));
+    }
+
+    const crewList = getCrewFromURL();
+    const ul = document.getElementById('crew');
+    crewList.forEach(person => {
+      const li = document.createElement('li');
+      li.textContent = person.name;
+      ul.appendChild(li);
+    });
+  </script>
+</body>
+</html>
