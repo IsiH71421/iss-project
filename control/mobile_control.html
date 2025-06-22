@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>🚀 ISS Control Panel 🌍</title>
+  <title>Mobile Control Page</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
@@ -66,7 +66,7 @@
     function sendCommand(command) {
       $.ajax({
         type: "PUT",
-        url: window.name, // callback URL from CPEE engine
+        url: window.name, // callback URL from CPEE engine 🚀
         contentType: "application/json",
         data: JSON.stringify({ command: command }),
         success: function () {
@@ -80,7 +80,7 @@
   </script>
 </head>
 <body>
-  <h1>🚀 ISS Screen Control 🌍</h1>
+  <h1>ISS Screen Control</h1> 
   <button onclick="sendCommand('forecast')"><span class="emoji">🔭</span> Show Seven Day Forecast</button>
   <button onclick="sendCommand('location')"><span class="emoji">🌍</span> Show ISS Location</button>
   <button onclick="sendCommand('crew')"><span class="emoji">🤓</span> Show ISS Crew</button>
@@ -88,3 +88,4 @@
   <button onclick="sendCommand('countdown')"><span class="emoji">⬅️</span> Return to Countdown</button>
 </body>
 </html>
+
