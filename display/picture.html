@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><title>NASA Bild des Tages</title></head>
+<body>
+  <h1>NASA Picture of the Day</h1>
+  <img id="apod" width="600"/>
+  <p id="desc"></p>
+  <script>
+    fetch('https://api.nasa.gov/planetary/apod?api_key=yJXbMcGV5497ZLAUTc3xJisvMoUNPmqYGh3kAqfE')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('apod').src = data.url;
+        document.getElementById('desc').textContent = data.explanation;
+      });
+  </script>
+</body>
+</html>
