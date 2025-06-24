@@ -1,17 +1,34 @@
 <!DOCTYPE html>
 <html>
-<head><title>NASA Bild des Tages</title></head>
+<head>
+  <title>NASA Picture of the Day</title>
+</head>
 <body>
   <h1>NASA Picture of the Day</h1>
-  <img id="apod" width="600"/>
+  <img id="apod" width="600" />
   <p id="desc"></p>
+  
   <script>
-    fetch('https://api.nasa.gov/planetary/apod?api_key=yJXbMcGV5497ZLAUTc3xJisvMoUNPmqYGh3kAqfE')
-      .then(res => res.json())
-      .then(data => {
+    function getParameterByName(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+
+    const pictureQueryString = getParameterByName('picture_query_string');
+
+    if (pictureQueryString) {
+      try {
+        const data = JSON.parse(pictureQueryString);
         document.getElementById('apod').src = data.url;
         document.getElementById('desc').textContent = data.explanation;
-      });
+      } catch (e) {
+        console.error('Ungültiges picture_query_string-Format:', e);
+        document.getElementById('desc').textContent = 'Fehler beim Laden des Bildes.';
+      }
+    } else {
+      document.getElementById('desc').textContent = 'Kein Bild übergeben.';
+    }
   </script>
 </body>
 </html>
+
