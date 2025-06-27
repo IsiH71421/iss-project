@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Next ISS Overpass</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f0f0f0;
+      text-align: center;
+      padding-top: 2rem;
+    }
+
+    #countdown {
+      font-size: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    #countdown.alert {
+      animation: blink 1s step-start infinite;
+      color: red;
+      font-weight: bold;
+    }
+
+    #final-message {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      color: green;
+      font-weight: bold;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Next ISS Pass Over Garching</h1>
+  <div id="countdown">Loading countdown...</div>
+  <div id="final-message"></div>
+
+  <p><strong>Scan the QR Code to choose the ISS information that you want to see.</strong></p>
+  <img src="../assets/qr_code.png" alt="Scan QR Code to control" width="200">
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const startTimestamp = parseInt(urlParams.get('start')) * 1000;
+    const endTimestamp = parseInt(urlParams.get('end')) * 1000;
+    const durationSeconds = Math.floor((endTimestamp - startTimestamp) / 1000);
+
+    const countdownEl = document.getElementById('countdown');
+    const finalMessageEl = document.getElementById('final-message');
+
+    function formatTime(secondsTotal) {
+      const days = Math.floor(secondsTotal / (3600 * 24));
+      const hours = Math.floor((secondsTotal % (3600 * 24)) / 3600);
+      const mins = Math.floor((secondsTotal % 3600) / 60);
+      const secs = secondsTotal % 60;
+
+      let parts = [];
+      if (days > 0) parts.push(`${days} day${days !== 1 ? 's' : ''}`);
+      if (hours > 0) parts.push(`${hours} hour${hours !== 1 ? 's' : ''}`);
+      if (mins > 0) parts.push(`${mins} minute${mins !== 1 ? 's' : ''}`);
+      parts.push(`${secs} second${secs !== 1 ? 's' : ''}`);
+
+      if (parts.length === 1) return parts[0];
+      if (parts.length === 2) return parts[0] + " and " + parts[1];
+      return parts.slice(0, -1).join(", ") + ", and " + parts[parts.length - 1];
+    }
+
+    function updateCountdown() {
+      const now = Date.now();
+
+      if (now < startTimestamp) {
+        const diff = Math.floor((startTimestamp - now) / 1000);
+        countdownEl.textContent = `Next pass in ${formatTime(diff)} (Duration: ${formatTime(durationSeconds)})`;
+
+        if (diff <= 60) {
+          countdownEl.classList.add("alert");
+          finalMessageEl.textContent = "🚀 ISS is coming NOW!";
+        } else {
+          countdownEl.classList.remove("alert");
+          finalMessageEl.textContent = "";
+        }
+      } else if (now >= startTimestamp && now < endTimestamp) {
+        const remaining = Math.floor((endTimestamp - now) / 1000);
+        countdownEl.textContent = `👀 ISS is visible! Time left: ${formatTime(remaining)}`;
+        countdownEl.classList.add("alert");
+        finalMessageEl.textContent = "Don't miss it!";
+      } else {
+        countdownEl.textContent = "";
+        countdownEl.classList.remove("alert");
+        finalMessageEl.textContent = "The ISS is gone. Did you take some nice pictures?";
+      }
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
