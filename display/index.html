@@ -6,106 +6,106 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-   body {
-  background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-  font-family: 'Roboto', sans-serif;
-  color: #fff;
-  text-align: center;
-  padding: 3rem 1rem;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+    body {
+      background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+      font-family: 'Roboto', sans-serif;
+      color: #fff;
+      text-align: center;
+      padding: 3rem 1rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-h1 {
-  font-size: 2.8rem;
-  margin-bottom: 2rem;
-  text-shadow: 0 0 8px rgba(0,0,0,0.5);
-}
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 2rem;
+      text-shadow: 0 0 8px rgba(0,0,0,0.5);
+    }
 
-#countdown-container {
-  margin-bottom: 2rem;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 1rem 2rem;
-  border-radius: 12px;
-  max-width: 600px;
-  width: 90%;
-}
+    #countdown-container {
+      margin-bottom: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      max-width: 600px;
+      width: 90%;
+    }
 
-#countdown {
-  font-size: 2rem;
-  margin-top: 1rem;
-}
+    #countdown {
+      font-size: 2rem;
+      margin-top: 1rem;
+    }
 
-#countdown.alert {
-  animation: blink 1s step-start infinite;
-  color: yellow;
-  font-weight: bold;
-}
+    #countdown.alert {
+      animation: blink 1s step-start infinite;
+      color: yellow;
+      font-weight: bold;
+    }
 
-#final-message {
-  font-size: 1.5rem;
-  margin-top: 1rem;
-  color: #00ff00;
-  font-weight: bold;
-}
+    #final-message {
+      font-size: 1.5rem;
+      margin-top: 1rem;
+      color: #00ff00;
+      font-weight: bold;
+    }
 
-.option {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
-  flex-direction: row;
-}
+    .option {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      flex-direction: row;
+    }
 
-button {
-  background: rgba(255, 255, 255, 0.15);
-  border: 2px solid #fff;
-  border-radius: 12px;
-  color: #fff;
-  font-size: 1.25rem;
-  font-weight: 700;
-  padding: 1em 2.5em;
-  cursor: pointer;
-  width: 250px;
-  max-width: 90vw;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.8em;
-}
+    button {
+      background: rgba(255, 255, 255, 0.15);
+      border: 2px solid #fff;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 1.25rem;
+      font-weight: 700;
+      padding: 1em 2.5em;
+      cursor: pointer;
+      width: 250px;
+      max-width: 90vw;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8em;
+    }
 
-button:hover, button:focus {
-  background: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 6px 20px rgba(255,255,255,0.6);
-  transform: translateY(-3px);
-  outline: none;
-}
+    button:hover, button:focus {
+      background: rgba(255, 255, 255, 0.35);
+      box-shadow: 0 6px 20px rgba(255,255,255,0.6);
+      transform: translateY(-3px);
+      outline: none;
+    }
 
-button:active {
-  transform: translateY(0);
-  box-shadow: 0 3px 10px rgba(255,255,255,0.3);
-}
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 3px 10px rgba(255,255,255,0.3);
+    }
 
-button span.emoji {
-  font-size: 1.5rem;
-}
+    button span.emoji {
+      font-size: 1.5rem;
+    }
 
-.qr-code {
-  width: 80px;
-  height: 80px;
-  border: 2px solid #fff;
-  background: #fff;
-  padding: 5px;
-  border-radius: 8px;
-}
+    .qr-code {
+      width: 80px;
+      height: 80px;
+      border: 2px solid #fff;
+      background: #fff;
+      padding: 5px;
+      border-radius: 8px;
+    }
 
-@keyframes blink {
-  50% { opacity: 0; }
-}
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
   </style>
 
   <script src="https://cpee.org/js_libs/jquery.min.js"></script>
@@ -129,42 +129,44 @@ button span.emoji {
 <body>
   <h1>ISS</h1>
 
- <div id="countdown-container">
+  <div id="countdown-container">
     <h2>Next ISS Pass Over Garching</h2>
     <div id="countdown">Loading countdown...</div>
     <div id="final-message"></div>
   </div>
 
   <div class="option">
-  <button onclick="sendCommand('prediction')">
-    <span class="emoji">🔭</span> Show Seven Day Forecast
-    <img src="../assets/qr_iss_passes.png" alt="Forecast QR" class="qr-code">
-  </button>
+    <button onclick="sendCommand('prediction')">
+      <span class="emoji">🔭</span> Show Seven Day Forecast
+      <img src="../assets/qr_iss_passes.png" alt="Forecast QR" class="qr-code">
+    </button>
 
-  <button onclick="sendCommand('location')">
-    <span class="emoji">🌍</span> Show ISS Location
-    <img src="../assets/qr_iss_position.png" alt="Location QR" class="qr-code">
-  </button>
+    <button onclick="sendCommand('location')">
+      <span class="emoji">🌍</span> Show ISS Location
+      <img src="../assets/qr_iss_position.png" alt="Location QR" class="qr-code">
+    </button>
 
-  <button onclick="sendCommand('crew')">
-    <span class="emoji">🤓</span> Show ISS Crew
-    <img src="../assets/qr_people.png" alt="Crew QR" class="qr-code">
-  </button>
+    <button onclick="sendCommand('crew')">
+      <span class="emoji">🤓</span> Show ISS Crew
+      <img src="../assets/qr_people.png" alt="Crew QR" class="qr-code">
+    </button>
 
-  <button onclick="sendCommand('picture')">
-    <span class="emoji">📡</span> Show NASA Picture of the Day
-    <img src="../assets/qr_picture.png" alt="Picture QR" class="qr-code">
-  </button>
-</div>
+    <button onclick="sendCommand('picture')">
+      <span class="emoji">📡</span> Show NASA Picture of the Day
+      <img src="../assets/qr_picture.png" alt="Picture QR" class="qr-code">
+    </button>
+  </div>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const startTimestamp = parseInt(urlParams.get('start')) * 1000;
-    const endTimestamp = parseInt(urlParams.get('end')) * 1000;
-    const durationSeconds = Math.floor((endTimestamp - startTimestamp) / 1000);
+    const startParam = urlParams.get('start');
+    const endParam = urlParams.get('end');
 
     const countdownEl = document.getElementById('countdown');
     const finalMessageEl = document.getElementById('final-message');
+
+    const startTimestamp = startParam ? parseInt(startParam) * 1000 : null;
+    const endTimestamp = endParam ? parseInt(endParam) * 1000 : null;
 
     function formatTime(secondsTotal) {
       const days = Math.floor(secondsTotal / (3600 * 24));
@@ -183,34 +185,52 @@ button span.emoji {
       return parts.slice(0, -1).join(", ") + ", and " + parts[parts.length - 1];
     }
 
-    function updateCountdown() {
-      const now = Date.now();
-
-      if (now < startTimestamp) {
-        const diff = Math.floor((startTimestamp - now) / 1000);
-        countdownEl.textContent = `Next pass in ${formatTime(diff)} (Duration: ${formatTime(durationSeconds)})`;
-
-        if (diff <= 60) {
-          countdownEl.classList.add("alert");
-          finalMessageEl.textContent = "🚀 ISS is coming NOW!";
-        } else {
-          countdownEl.classList.remove("alert");
-          finalMessageEl.textContent = "";
-        }
-      } else if (now >= startTimestamp && now < endTimestamp) {
-        const remaining = Math.floor((endTimestamp - now) / 1000);
-        countdownEl.textContent = `👀 ISS is visible! Time left: ${formatTime(remaining)}`;
-        countdownEl.classList.add("alert");
-        finalMessageEl.textContent = "Don't miss it!";
-      } else {
-        countdownEl.textContent = "";
-        countdownEl.classList.remove("alert");
-        finalMessageEl.textContent = "The ISS is gone. Did you take some nice pictures?";
-      }
+    function noValidPrediction() {
+      countdownEl.textContent = "No prediction data available";
+      countdownEl.classList.add("alert");
+      finalMessageEl.textContent = "";
     }
 
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
+    if (!startTimestamp || !endTimestamp || isNaN(startTimestamp) || isNaN(endTimestamp)) {
+      noValidPrediction();
+    } else {
+      const now = Date.now();
+
+      if (startTimestamp < now && endTimestamp < now) {
+        noValidPrediction();
+      } else {
+        const durationSeconds = Math.floor((endTimestamp - startTimestamp) / 1000);
+
+        function updateCountdown() {
+          const now = Date.now();
+
+          if (now < startTimestamp) {
+            const diff = Math.floor((startTimestamp - now) / 1000);
+            countdownEl.textContent = `Next pass in ${formatTime(diff)} (Duration: ${formatTime(durationSeconds)})`;
+
+            if (diff <= 60) {
+              countdownEl.classList.add("alert");
+              finalMessageEl.textContent = "🚀 ISS is coming NOW!";
+            } else {
+              countdownEl.classList.remove("alert");
+              finalMessageEl.textContent = "";
+            }
+          } else if (now >= startTimestamp && now < endTimestamp) {
+            const remaining = Math.floor((endTimestamp - now) / 1000);
+            countdownEl.textContent = `👀 ISS is visible! Time left: ${formatTime(remaining)}`;
+            countdownEl.classList.add("alert");
+            finalMessageEl.textContent = "Don't miss it!";
+          } else {
+            countdownEl.textContent = "";
+            countdownEl.classList.remove("alert");
+            finalMessageEl.textContent = "The ISS is gone. Did you take some nice pictures?";
+          }
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+      }
+    }
   </script>
 </body>
 </html>
