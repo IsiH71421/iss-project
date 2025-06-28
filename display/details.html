@@ -80,7 +80,10 @@ button:active {
   Loading pass details...
 </div>
 
-<button onclick="window.history.back()">⬅ Back</button>
+<button onclick="window.history.back()">
+    ⬅ Back
+    <img src="../assets/qr_index.png" alt="Back QR" class="qr-code">
+</button>
 
 <script>
 const urlParams = new URLSearchParams(window.location.search);
