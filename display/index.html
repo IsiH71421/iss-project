@@ -98,12 +98,10 @@
         const durationSeconds = Math.floor((endTimestamp - startTimestamp) / 1000);
 
         function createTimeBlock(value, label) {
-          return `
-    <div class="time-block">
-      <div class="time-value">${value}</div>
-      <div class="time-label">${label}</div>
-    </div>
-  `;
+          return `<div class="time-block">
+            <div class="time-value">${value}</div>
+            <div class="time-label">${label}</div>
+            </div>`;
         }
 
         function formatTimeBlocks(secondsTotal) {
@@ -126,13 +124,11 @@
 
           if (now < startTimestamp) {
             const diff = Math.floor((startTimestamp - now) / 1000);
-            countdownEl.innerHTML = `
-  Next pass in
-  <div class="countdown-blocks">
-    ${formatTimeBlocks(diff)}
-  </div>
-  Pass-Duration: ${formatTime(durationSeconds)}
-`;
+            countdownEl.innerHTML = `Next pass in
+            <div class="countdown-blocks">
+              ${formatTimeBlocks(diff)}
+              </div>
+              The ISS will be visible for ${formatTime(durationSeconds)}.`;
 
             if (diff <= 60) {
               countdownEl.classList.add("alert");
@@ -143,12 +139,10 @@
             }
           } else if (now >= startTimestamp && now < endTimestamp) {
             const remaining = Math.floor((endTimestamp - now) / 1000);
-            countdownEl.innerHTML = `
-  👀 ISS is visible! Time left:
-  <div class="countdown-blocks">
-    ${formatTimeBlocks(remaining)}
-  </div>
-`;
+            countdownEl.innerHTML = `👀 ISS is visible! Time left:
+            <div class="countdown-blocks">
+              ${formatTimeBlocks(remaining)}
+              </div>`;
             countdownEl.classList.add("alert");
             finalMessageEl.textContent = "Don't miss it!";
           } else {

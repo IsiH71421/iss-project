@@ -10,11 +10,11 @@
    display: flex;
    flex-direction: column;
    align-items: center;
+   gap: 2rem;
  }
 
  h1 {
    font-size: 2.8rem;
-   margin-bottom: 2rem;
    text-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
  }
 
@@ -24,7 +24,7 @@
    border-radius: 12px;
    max-width: 600px;
    width: 90vw;
-   margin: 0 auto;
+   margin: auto;
    color: #fff;
    text-align: center;
    font-family: 'Roboto', sans-serif;
@@ -39,7 +39,7 @@
  }
 
  .time-block {
-   background: rgba(255, 255, 255, 0.2);
+   background-color: rgba(204, 228, 255, 0.8);
    padding: 1rem 1.2rem;
    border-radius: 8px;
    min-width: 70px;
@@ -48,12 +48,14 @@
  }
 
  .time-value {
+   color: #0047b3;
    font-size: 2.8rem;
    font-weight: 700;
    line-height: 1;
  }
 
  .time-label {
+   color: #0047b3;
    font-size: 1rem;
    margin-top: 0.2rem;
    text-transform: lowercase;
