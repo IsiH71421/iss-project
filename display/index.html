@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>ISS Screen Control</title>
@@ -22,6 +23,7 @@
     }
   </script>
 </head>
+
 <body>
   <h1>ISS</h1>
 
@@ -31,27 +33,27 @@
     <div id="final-message"></div>
   </div>
 
-  <div class="option">
-  <div class="qr-code-option">
-    <span class="emoji">🔭</span> Show Seven Day Forecast
-    <img src="../assets/qr_iss_passes.png" alt="Forecast QR" class="qr-code">
-  </div>
+  <div class="control-buttons">
+    <div class="qr-code-option">
+      <span class="emoji">🔭</span> Show Seven Day Forecast
+      <img src="../assets/qr_iss_passes.png" alt="Forecast QR" class="qr-code">
+    </div>
 
-  <div class="qr-code-option">
-    <span class="emoji">🌍</span> Show ISS Location
-    <img src="../assets/qr_iss_position.png" alt="Location QR" class="qr-code">
-  </div>
+    <div class="qr-code-option">
+      <span class="emoji">🌍</span> Show ISS Location
+      <img src="../assets/qr_iss_position.png" alt="Location QR" class="qr-code">
+    </div>
 
-  <div class="qr-code-option">
-    <span class="emoji">🤓</span> Show ISS Crew
-    <img src="../assets/qr_people.png" alt="Crew QR" class="qr-code">
-  </div>
+    <div class="qr-code-option">
+      <span class="emoji">🤓</span> Show ISS Crew
+      <img src="../assets/qr_people.png" alt="Crew QR" class="qr-code">
+    </div>
 
-  <div class="qr-code-option">
-    <span class="emoji">📡</span> Show NASA Picture of the Day
-    <img src="../assets/qr_picture.png" alt="Picture QR" class="qr-code">
+    <div class="qr-code-option">
+      <span class="emoji">📡</span> Show NASA Picture of the Day
+      <img src="../assets/qr_picture.png" alt="Picture QR" class="qr-code">
+    </div>
   </div>
-</div>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
@@ -128,4 +130,5 @@
     }
   </script>
 </body>
+
 </html>

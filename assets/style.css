@@ -21,7 +21,7 @@
  #countdown-container {
    margin-bottom: 2rem;
    background: rgba(255, 255, 255, 0.1);
-   padding: 1rem 2rem;
+   padding: 1rem 1rem;
    border-radius: 12px;
    max-width: 600px;
    width: 90%;
@@ -45,7 +45,7 @@
    font-weight: bold;
  }
 
- .option {
+ .control-buttons {
    display: flex;
    flex-wrap: wrap;
    justify-content: center;
@@ -60,7 +60,7 @@
    color: #fff;
    font-size: 1.25rem;
    font-weight: 700;
-   padding: 1em 2.5em;
+   padding: 1em 1em;
    width: 250px;
    max-width: 90vw;
    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
