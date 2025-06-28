@@ -4,10 +4,63 @@
   <title>ISS Live Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+    #map {
+      height: 100%;
+      width: 100%;
+      z-index: 0;
+    }
+    .header {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 18px;
+      font-weight: bold;
+      z-index: 1000;
+    }
+    .qr-container {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 5px;
+      border-radius: 5px;
+      text-align: center;
+      z-index: 1000;
+    }
+    .qr-container img {
+      display: block;
+      margin: 5px auto;
+      width: 100px;
+      height: 100px;
+    }
+    .qr-label {
+      font-size: 12px;
+      margin: 4px 0;
+    }
+  </style>
 </head>
 <body>
-  <h1>Current ISS Position</h1>
-  <div id="map" style="height: 600px;"></div>
+  <div id="map"></div>
+
+  <div class="header">Current ISS Position</div>
+
+  <div class="qr-container">
+    <div class="qr-label">Zoom In</div>
+    <img src="../assets/qr_zoom-in.png" alt="Zoom In QR Code">
+    <div class="qr-label">Zoom Out</div>
+    <img src="../assets/qr_zoom-out.png" alt="Zoom Out QR Code">
+  </div>
+
   <script>
     function getParam(name) {
       const urlParams = new URLSearchParams(window.location.search);
@@ -16,8 +69,9 @@
 
     const lat = getParam('latitude') || 0;
     const lon = getParam('longitude') || 0;
+    const zoom = getParam('zoom') || 3;
 
-    var map = L.map('map').setView([lat, lon], 3);
+    var map = L.map('map', {zoomControl: false}).setView([lat, lon], zoom);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
     var marker = L.marker([lat, lon]).addTo(map);
   </script>
