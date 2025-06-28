@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+  <meta charset="UTF-8" />
   <title>People on the ISS</title>
   <link rel="stylesheet" href="../assets/style.css" />
 </head>
+
 <body>
   <h1>Currently on the ISS:</h1>
   <ul id="crew"></ul>
+
+  <div class="qr-code-option">
+    <span class="emoji">⬅</span> Back to Countdown
+    <img src="../assets/qr_index.png" alt="Back QR" class="qr-code">
+  </div>
 
   <script>
     function getCrewFromURL() {
@@ -25,5 +33,7 @@
       ul.appendChild(li);
     });
   </script>
+
 </body>
+
 </html>

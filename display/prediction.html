@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>ISS Passes in the Next 7 Days</title>
   <link rel="stylesheet" href="../assets/style.css" />
 </head>
+
 <body>
   <h1>ISS Passes in the Next 7 Days</h1>
   <div id="passes"></div>
@@ -22,8 +24,8 @@
       if (days > 0 || hours > 0 || minutes > 0) parts.push(minutes + ' minute' + (minutes !== 1 ? 's' : ''));
       parts.push(secs + ' second' + (secs !== 1 ? 's' : ''));
 
-      if(parts.length === 1) return parts[0];
-      if(parts.length === 2) return parts[0] + ' and ' + parts[1];
+      if (parts.length === 1) return parts[0];
+      if (parts.length === 2) return parts[0] + ' and ' + parts[1];
       return parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1];
     }
 
@@ -34,7 +36,7 @@
         const end = parseInt(div.dataset.end) * 1000;
 
         let text;
-        if(now < start) {
+        if (now < start) {
           const diff = Math.floor((start - now) / 1000);
           text = 'Next pass in ' + formatDuration(diff) + '. <br>ISS will be visible for ' + formatDuration(Math.floor((end - start) / 1000)) + '.';
         } else if (now >= start && now <= end) {
@@ -51,7 +53,7 @@
 
     let passes = [];
     let i = 1;
-    while(params.has('start' + i) && params.has('end' + i)) {
+    while (params.has('start' + i) && params.has('end' + i)) {
       passes.push({
         start: parseInt(params.get('start' + i), 10),
         end: parseInt(params.get('end' + i), 10)
@@ -61,7 +63,7 @@
 
     const container = document.getElementById('passes');
 
-    if(passes.length === 0) {
+    if (passes.length === 0) {
       container.textContent = 'No passes found in the next 7 days.';
     } else {
       passes.forEach(p => {
@@ -86,5 +88,12 @@
     updateCountdowns();
     setInterval(updateCountdowns, 1000);
   </script>
+
+  <div class="qr-code-option">
+    <span class="emoji">⬅</span> Back to Countdown
+    <img src="../assets/qr_index.png" alt="Back QR" class="qr-code">
+  </div>
+
 </body>
+
 </html>

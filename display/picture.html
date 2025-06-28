@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+  <meta charset="UTF-8" />
   <title>NASA Picture of the Day</title>
   <link rel="stylesheet" href="../assets/style.css" />
 </head>
+
 <body>
   <h1>NASA Picture of the Day</h1>
   <img id="apod" width="600" />
   <p id="desc"></p>
-  
+
+  <div class="qr-code-option">
+    <span class="emoji">⬅</span> Back to Countdown
+    <img src="../assets/qr_index.png" alt="Back QR" class="qr-code">
+  </div>
+
   <script>
     function getParameterByName(name) {
       const url = new URL(window.location.href);
@@ -24,12 +32,13 @@
         document.getElementById('desc').textContent = data.explanation;
       } catch (e) {
         console.error('Ungültiges picture_query_string-Format:', e);
-        document.getElementById('desc').textContent = 'Fehler beim Laden des Bildes.';
+        document.getElementById('desc').textContent = 'Problem with the given data.';
       }
     } else {
-      document.getElementById('desc').textContent = 'Kein Bild übergeben.';
+      document.getElementById('desc').textContent = 'No data was found.';
     }
   </script>
-</body>
-</html>
 
+</body>
+
+</html>
