@@ -25,15 +25,14 @@
 </head>
 
 <body>
-  <h1>ISS</h1>
+  <h1>Next ISS Pass over Garching</h1>
 
   <div id="countdown-container">
-    <h2>Next ISS Pass Over Garching</h2>
     <div id="countdown">Loading countdown...</div>
     <div id="final-message"></div>
   </div>
 
-  <div class="control-buttons">
+  <div class="qr-code-option-container">
     <div class="qr-code-option">
       <span class="emoji">🔭</span> Show Seven Day Forecast
       <img src="../assets/qr_iss_passes.png" alt="Forecast QR" class="qr-code">
@@ -98,12 +97,42 @@
       } else {
         const durationSeconds = Math.floor((endTimestamp - startTimestamp) / 1000);
 
+        function createTimeBlock(value, label) {
+          return `
+    <div class="time-block">
+      <div class="time-value">${value}</div>
+      <div class="time-label">${label}</div>
+    </div>
+  `;
+        }
+
+        function formatTimeBlocks(secondsTotal) {
+          const days = Math.floor(secondsTotal / (3600 * 24));
+          const hours = Math.floor((secondsTotal % (3600 * 24)) / 3600);
+          const mins = Math.floor((secondsTotal % 3600) / 60);
+          const secs = secondsTotal % 60;
+
+          let blocks = [];
+          if (days > 0) blocks.push(createTimeBlock(days, days === 1 ? 'day' : 'days'));
+          if (hours > 0) blocks.push(createTimeBlock(hours, hours === 1 ? 'hour' : 'hours'));
+          if (mins > 0) blocks.push(createTimeBlock(mins, mins === 1 ? 'minute' : 'minutes'));
+          blocks.push(createTimeBlock(secs, secs === 1 ? 'second' : 'seconds'));
+
+          return blocks.join('');
+        }
+
         function updateCountdown() {
           const now = Date.now();
 
           if (now < startTimestamp) {
             const diff = Math.floor((startTimestamp - now) / 1000);
-            countdownEl.textContent = `Next pass in ${formatTime(diff)} (Duration: ${formatTime(durationSeconds)})`;
+            countdownEl.innerHTML = `
+  Next pass in
+  <div class="countdown-blocks">
+    ${formatTimeBlocks(diff)}
+  </div>
+  Pass-Duration: ${formatTime(durationSeconds)}
+`;
 
             if (diff <= 60) {
               countdownEl.classList.add("alert");
@@ -114,7 +143,12 @@
             }
           } else if (now >= startTimestamp && now < endTimestamp) {
             const remaining = Math.floor((endTimestamp - now) / 1000);
-            countdownEl.textContent = `👀 ISS is visible! Time left: ${formatTime(remaining)}`;
+            countdownEl.innerHTML = `
+  👀 ISS is visible! Time left:
+  <div class="countdown-blocks">
+    ${formatTimeBlocks(remaining)}
+  </div>
+`;
             countdownEl.classList.add("alert");
             finalMessageEl.textContent = "Don't miss it!";
           } else {
