@@ -3,29 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>ISS Passes in the Next 7 Days</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background-color: #f0f0f0;
-      padding: 2rem;
-      max-width: 600px;
-      margin: auto;
-    }
-    h1 {
-      text-align: center;
-    }
-    .pass {
-      background: white;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 0 5px #ccc;
-    }
-    .countdown {
-      font-weight: bold;
-      color: #007700;
-    }
-  </style>
+  <link rel="stylesheet" href="../assets/style.css" />
 </head>
 <body>
   <h1>ISS Passes in the Next 7 Days</h1>
@@ -69,7 +47,6 @@
       });
     }
 
-    // Read query parameters
     const params = new URLSearchParams(window.location.search);
 
     let passes = [];

@@ -1,6 +1,6 @@
 <?php
 $cb = file_get_contents('callback.url');
-$data = array("zoom" => "in");
+$data = array("zoom" => "zoom-in");
 $opts = array(
   'http'=>array(
     'method'=>"PUT",
