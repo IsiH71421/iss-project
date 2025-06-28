@@ -8,13 +8,25 @@
 </head>
 
 <body>
-  <h1>NASA Picture of the Day</h1>
+  <h1 id="headline">NASA Picture of the Day</h1>
   <img id="apod" width="600" />
   <p id="desc"></p>
 
-  <div class="qr-code-option">
-    <span class="emoji">⬅</span> Back to Countdown
-    <img src="../assets/qr_index.png" alt="Back QR" class="qr-code">
+  <div class="qr-code-option-container">
+    <div class="qr-code-option">
+      <span class="emoji">📅</span> Get picture of the day before
+      <img src="../assets/qr_picture.png" alt="Back QR" class="qr-code">
+    </div>
+
+    <div class="qr-code-option" id="qr-next-day" style="display:none;">
+      <span class="emoji">📅</span> Get picture of the next day
+      <img src="../assets/qr_picture.png" alt="Forward QR" class="qr-code">
+    </div>
+
+    <div class="qr-code-option">
+      <span class="emoji">⬅</span> Back to Countdown
+      <img src="../assets/qr_index.png" alt="Back QR" class="qr-code">
+    </div>
   </div>
 
   <script>
@@ -23,7 +35,24 @@
       return url.searchParams.get(name);
     }
 
+    const goXDaysBack = parseInt(getParameterByName('go_x_days_back')) || 0;
     const pictureQueryString = getParameterByName('picture_query_string');
+
+    const headlineEl = document.getElementById('headline');
+    if (goXDaysBack === 0) {
+      headlineEl.textContent = 'NASA Picture of the Day';
+    } else if (goXDaysBack === 1) {
+      headlineEl.textContent = 'NASA Picture from 1 day ago';
+    } else {
+      headlineEl.textContent = `NASA Picture from ${goXDaysBack} days ago`;
+    }
+
+    /* const forwardQr = document.getElementById('qr-day-forward');
+     if (goXDaysBack > 0) {
+       forwardQr.style.display = 'flex';
+     } else {
+       forwardQr.style.display = 'none';
+     }*/
 
     if (pictureQueryString) {
       try {
