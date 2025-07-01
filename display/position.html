@@ -54,17 +54,28 @@
   <script>
     function getParam(name) {
       const urlParams = new URLSearchParams(window.location.search);
-      return parseFloat(urlParams.get(name));
+      return urlParams.get(name);
     }
 
-    const lat = getParam('latitude') || 0;
-    const lon = getParam('longitude') || 0;
-    const zoom = getParam('zoom') || 3;
+    const paramsStr = getParam('params');
+    let lat = 0, lon = 0, zoom = 3;
+
+    if (paramsStr) {
+      try {
+        const params = JSON.parse(paramsStr);
+        lat = parseFloat(params.latitude) || 0;
+        lon = parseFloat(params.longitude) || 0;
+        zoom = parseInt(params.zoom) || 3;
+      } catch (e) {
+        console.warn('Ungültiger JSON-Parameter "params"');
+      }
+    }
 
     var map = L.map('map', { zoomControl: false }).setView([lat, lon], zoom);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
     var marker = L.marker([lat, lon]).addTo(map);
   </script>
+
 </body>
 
 </html>

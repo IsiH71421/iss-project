@@ -56,14 +56,23 @@
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const startParam = urlParams.get('start');
-    const endParam = urlParams.get('end');
+    const paramsStr = urlParams.get('params');
 
     const countdownEl = document.getElementById('countdown');
     const finalMessageEl = document.getElementById('final-message');
 
-    const startTimestamp = startParam ? parseInt(startParam) * 1000 : null;
-    const endTimestamp = endParam ? parseInt(endParam) * 1000 : null;
+    let startTimestamp = null;
+    let endTimestamp = null;
+
+    if (paramsStr) {
+      try {
+        const params = JSON.parse(paramsStr);
+        startTimestamp = params.start ? parseInt(params.start) * 1000 : null;
+        endTimestamp = params.end ? parseInt(params.end) * 1000 : null;
+      } catch (e) {
+        console.warn('Ungültiger JSON-Parameter "params"');
+      }
+    }
 
     function formatTime(secondsTotal) {
       const days = Math.floor(secondsTotal / (3600 * 24));
