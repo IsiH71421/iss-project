@@ -50,15 +50,23 @@
     }
 
     const params = new URLSearchParams(window.location.search);
+    const timestampsParam = params.get('timestamps');
 
     let passes = [];
-    let i = 1;
-    while (params.has('start' + i) && params.has('end' + i)) {
-      passes.push({
-        start: parseInt(params.get('start' + i), 10),
-        end: parseInt(params.get('end' + i), 10)
-      });
-      i++;
+
+    if (timestampsParam) {
+      try {
+        const timestamps = JSON.parse(timestampsParam);
+
+        for (let i = 0; i < timestamps.length; i += 2) {
+          passes.push({
+            start: parseInt(timestamps[i], 10),
+            end: parseInt(timestamps[i + 1], 10)
+          });
+        }
+      } catch (e) {
+        console.error("Invalid timestamps parameter:", e);
+      }
     }
 
     const container = document.getElementById('passes');
@@ -76,10 +84,10 @@
         const endDate = new Date(p.end * 1000);
 
         div.innerHTML = `
-          <div>Start: ${startDate.toLocaleString('en-US')}</div>
-          <div>End: ${endDate.toLocaleString('en-US')}</div>
-          <div class="countdown">Loading countdown...</div>
-        `;
+        <div>Start: ${startDate.toLocaleString('en-US')}</div>
+        <div>End: ${endDate.toLocaleString('en-US')}</div>
+        <div class="countdown">Loading countdown...</div>
+      `;
 
         container.appendChild(div);
       });

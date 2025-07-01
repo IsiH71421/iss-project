@@ -19,10 +19,20 @@
   <script>
     function getCrewFromURL() {
       const params = new URLSearchParams(window.location.search);
-      const crewParam = params.get('crew'); // z. B. "Oleg Kononenko|Tracy Caldwell Dyson"
+      const crewParam = params.get('crew'); // z. B. '["Oleg Kononenko", "Nikolai Chub", "Tracy Caldwell Dyson"]'
+
       if (!crewParam) return [];
 
-      return crewParam.split('|').map(name => ({ name }));
+      try {
+        const crewArray = JSON.parse(crewParam);
+        if (Array.isArray(crewArray)) {
+          return crewArray.map(name => ({ name }));
+        }
+      } catch (e) {
+        console.error("Fehler beim Parsen des JSON:", e);
+      }
+
+      return [];
     }
 
     const crewList = getCrewFromURL();
