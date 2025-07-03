@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <title>ISS Passes in the Next 7 Days</title>
-  <link rel="stylesheet" href="../assets/style.css" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <script src="../assets/js/functions.js"></script>
 </head>
 
 <body>
@@ -12,43 +13,6 @@
   <div id="passes"></div>
 
   <script>
-    function formatDuration(seconds) {
-      const days = Math.floor(seconds / (3600 * 24));
-      const hours = Math.floor((seconds % (3600 * 24)) / 3600);
-      const minutes = Math.floor((seconds % 3600) / 60);
-      const secs = seconds % 60;
-
-      let parts = [];
-      if (days > 0) parts.push(days + ' day' + (days > 1 ? 's' : ''));
-      if (days > 0 || hours > 0) parts.push(hours + ' hour' + (hours !== 1 ? 's' : ''));
-      if (days > 0 || hours > 0 || minutes > 0) parts.push(minutes + ' minute' + (minutes !== 1 ? 's' : ''));
-      parts.push(secs + ' second' + (secs !== 1 ? 's' : ''));
-
-      if (parts.length === 1) return parts[0];
-      if (parts.length === 2) return parts[0] + ' and ' + parts[1];
-      return parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1];
-    }
-
-    function updateCountdowns() {
-      const now = Date.now();
-      document.querySelectorAll('.pass').forEach(div => {
-        const start = parseInt(div.dataset.start) * 1000;
-        const end = parseInt(div.dataset.end) * 1000;
-
-        let text;
-        if (now < start) {
-          const diff = Math.floor((start - now) / 1000);
-          text = 'Next pass in ' + formatDuration(diff) + '. <br>ISS will be visible for ' + formatDuration(Math.floor((end - start) / 1000)) + '.';
-        } else if (now >= start && now <= end) {
-          const diff = Math.floor((end - now) / 1000);
-          text = 'Pass in progress, ends in ' + formatDuration(diff) + '.';
-        } else {
-          text = 'Pass finished. Did you take cool pictures?';
-        }
-        div.querySelector('.countdown').innerHTML = text;
-      });
-    }
-
     const params = new URLSearchParams(window.location.search);
     const timestampsParam = params.get('timestamps');
 
@@ -57,7 +21,6 @@
     if (timestampsParam) {
       try {
         const timestamps = JSON.parse(timestampsParam);
-
         for (let i = 0; i < timestamps.length; i += 2) {
           passes.push({
             start: parseInt(timestamps[i], 10),
@@ -84,12 +47,32 @@
         const endDate = new Date(p.end * 1000);
 
         div.innerHTML = `
-        <div>Start: ${startDate.toLocaleString('en-US')}</div>
-        <div>End: ${endDate.toLocaleString('en-US')}</div>
-        <div class="countdown">Loading countdown...</div>
-      `;
+                    <div>Start: ${startDate.toLocaleString('en-US')}</div>
+                    <div>End: ${endDate.toLocaleString('en-US')}</div>
+                    <div class="countdown">Loading countdown...</div>
+                `;
 
         container.appendChild(div);
+      });
+    }
+
+    function updateCountdowns() {
+      const now = Date.now();
+      document.querySelectorAll('.pass').forEach(div => {
+        const start = parseInt(div.dataset.start) * 1000;
+        const end = parseInt(div.dataset.end) * 1000;
+
+        let text;
+        if (now < start) {
+          const diff = Math.floor((start - now) / 1000);
+          text = `Next pass in ${formatTime(diff)}.<br>ISS will be visible for ${formatTime(Math.floor((end - start) / 1000))}.`;
+        } else if (now >= start && now <= end) {
+          const diff = Math.floor((end - now) / 1000);
+          text = `Pass in progress, ends in ${formatTime(diff)}.`;
+        } else {
+          text = 'Pass finished. Did you take cool pictures?';
+        }
+        div.querySelector('.countdown').innerHTML = text;
       });
     }
 
@@ -101,7 +84,6 @@
     <span class="emoji">⬅</span> Back to Countdown
     <img src="../assets/qr_index.png" alt="Back QR" class="qr-code">
   </div>
-
 </body>
 
 </html>

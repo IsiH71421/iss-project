@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>NASA Picture of the Day</title>
-  <link rel="stylesheet" href="../assets/style.css" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
 </head>
 
 <body>
@@ -47,20 +47,12 @@
       headlineEl.textContent = `NASA Picture from ${goXDaysBack} days ago`;
     }
 
-    /* const forwardQr = document.getElementById('qr-day-forward');
-     if (goXDaysBack > 0) {
-       forwardQr.style.display = 'flex';
-     } else {
-       forwardQr.style.display = 'none';
-     }*/
-
     if (pictureQueryString) {
       try {
         const data = JSON.parse(pictureQueryString);
         document.getElementById('apod').src = data.url;
         document.getElementById('desc').textContent = data.explanation;
       } catch (e) {
-        console.error('Ungültiges picture_query_string-Format:', e);
         document.getElementById('desc').textContent = 'Problem with the given data.';
       }
     } else {

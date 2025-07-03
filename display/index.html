@@ -4,24 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <title>ISS Screen Control</title>
-  <link rel="stylesheet" href="../assets/style.css" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
   <script src="https://cpee.org/js_libs/jquery.min.js"></script>
-  <script>
-    function sendCommand(command) {
-      $.ajax({
-        type: "PUT",
-        url: window.name,
-        contentType: "application/json",
-        data: JSON.stringify({ command: command }),
-        success: function () {
-          alert("✅ Command sent: " + command);
-        },
-        error: function () {
-          alert("❌ Failed to send command");
-        }
-      });
-    }
-  </script>
+  <script src="../assets/js/functions.js"></script>
 </head>
 
 <body>
@@ -37,17 +22,14 @@
       <span class="emoji">🔭</span> Show Seven Day Forecast
       <img src="../assets/qr_forecast.png" alt="Forecast QR" class="qr-code">
     </div>
-
     <div class="qr-code-option">
       <span class="emoji">🌍</span> Show ISS Location
       <img src="../assets/qr_position.png" alt="Location QR" class="qr-code">
     </div>
-
     <div class="qr-code-option">
       <span class="emoji">🤓</span> Show ISS Crew
       <img src="../assets/qr_crew.png" alt="Crew QR" class="qr-code">
     </div>
-
     <div class="qr-code-option">
       <span class="emoji">📡</span> Show NASA Picture of the Day
       <img src="../assets/qr_picture.png" alt="Picture QR" class="qr-code">
@@ -55,6 +37,21 @@
   </div>
 
   <script>
+    function sendCommand(command) {
+      $.ajax({
+        type: "PUT",
+        url: window.name,
+        contentType: "application/json",
+        data: JSON.stringify({ command: command }),
+        success: function () {
+          alert("✅ Command sent: " + command);
+        },
+        error: function () {
+          alert("❌ Failed to send command");
+        }
+      });
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const paramsStr = urlParams.get('params');
 
@@ -70,25 +67,8 @@
         startTimestamp = params.start ? parseInt(params.start) * 1000 : null;
         endTimestamp = params.end ? parseInt(params.end) * 1000 : null;
       } catch (e) {
-        console.warn('Ungültiger JSON-Parameter "params"');
+        console.warn('Invalid JSON parameter "params"');
       }
-    }
-
-    function formatTime(secondsTotal) {
-      const days = Math.floor(secondsTotal / (3600 * 24));
-      const hours = Math.floor((secondsTotal % (3600 * 24)) / 3600);
-      const mins = Math.floor((secondsTotal % 3600) / 60);
-      const secs = secondsTotal % 60;
-
-      let parts = [];
-      if (days > 0) parts.push(`${days} day${days !== 1 ? 's' : ''}`);
-      if (hours > 0) parts.push(`${hours} hour${hours !== 1 ? 's' : ''}`);
-      if (mins > 0) parts.push(`${mins} minute${mins !== 1 ? 's' : ''}`);
-      parts.push(`${secs} second${secs !== 1 ? 's' : ''}`);
-
-      if (parts.length === 1) return parts[0];
-      if (parts.length === 2) return parts[0] + " and " + parts[1];
-      return parts.slice(0, -1).join(", ") + ", and " + parts[parts.length - 1];
     }
 
     function noValidPrediction() {
@@ -106,38 +86,16 @@
       } else {
         const durationSeconds = Math.floor((endTimestamp - startTimestamp) / 1000);
 
-        function createTimeBlock(value, label) {
-          return `<div class="time-block">
-            <div class="time-value">${value}</div>
-            <div class="time-label">${label}</div>
-            </div>`;
-        }
-
-        function formatTimeBlocks(secondsTotal) {
-          const days = Math.floor(secondsTotal / (3600 * 24));
-          const hours = Math.floor((secondsTotal % (3600 * 24)) / 3600);
-          const mins = Math.floor((secondsTotal % 3600) / 60);
-          const secs = secondsTotal % 60;
-
-          let blocks = [];
-          if (days > 0) blocks.push(createTimeBlock(days, days === 1 ? 'day' : 'days'));
-          if (hours > 0) blocks.push(createTimeBlock(hours, hours === 1 ? 'hour' : 'hours'));
-          if (mins > 0) blocks.push(createTimeBlock(mins, mins === 1 ? 'minute' : 'minutes'));
-          blocks.push(createTimeBlock(secs, secs === 1 ? 'second' : 'seconds'));
-
-          return blocks.join('');
-        }
-
         function updateCountdown() {
           const now = Date.now();
 
           if (now < startTimestamp) {
             const diff = Math.floor((startTimestamp - now) / 1000);
             countdownEl.innerHTML = `Next pass in
-            <div class="countdown-blocks">
-              ${formatTimeBlocks(diff)}
-              </div>
-              The ISS will be visible for ${formatTime(durationSeconds)}.`;
+                        <div class="countdown-blocks">
+                            ${formatTimeBlocks(diff)}
+                        </div>
+                        The ISS will be visible for ${formatTime(durationSeconds)}.`;
 
             if (diff <= 60) {
               countdownEl.classList.add("alert");
@@ -149,9 +107,9 @@
           } else if (now >= startTimestamp && now < endTimestamp) {
             const remaining = Math.floor((endTimestamp - now) / 1000);
             countdownEl.innerHTML = `👀 ISS is visible! Time left:
-            <div class="countdown-blocks">
-              ${formatTimeBlocks(remaining)}
-              </div>`;
+                        <div class="countdown-blocks">
+                            ${formatTimeBlocks(remaining)}
+                        </div>`;
             countdownEl.classList.add("alert");
             finalMessageEl.textContent = "Don't miss it!";
           } else {
