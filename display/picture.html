@@ -9,8 +9,10 @@
 
 <body>
   <h1 id="headline">NASA Picture of the Day</h1>
-  <img id="apod" width="600" />
-  <p id="desc"></p>
+  <p id="date"></p>
+  <h2 id="title"></h2>
+  <img id="picture" width="600" />
+  <p id="explanation"></p>
 
   <div class="qr-code-option-container">
     <div class="qr-code-option">
@@ -36,9 +38,14 @@
     }
 
     const goXDaysBack = parseInt(getParameterByName('go_x_days_back')) || 0;
-    const pictureQueryString = getParameterByName('picture_query_string');
+    const pictureQueryString = getParameterByName('params');
 
     const headlineEl = document.getElementById('headline');
+    const dateEl = document.getElementById('date');
+    const titleEl = document.getElementById('title');
+    const pictureEl = document.getElementById('picture');
+    const explanationEl = document.getElementById('explanation');
+
     if (goXDaysBack === 0) {
       headlineEl.textContent = 'NASA Picture of the Day';
     } else if (goXDaysBack === 1) {
@@ -50,13 +57,24 @@
     if (pictureQueryString) {
       try {
         const data = JSON.parse(pictureQueryString);
-        document.getElementById('apod').src = data.url;
-        document.getElementById('desc').textContent = data.explanation;
+        pictureEl.src = data.url;
+        explanationEl.textContent = decodeURIComponent(data.explanation);
+        titleEl.textContent = data.title || '';
+        dateEl.textContent = data.date || '';
+        pictureEl.style.display = 'block';
       } catch (e) {
-        document.getElementById('desc').textContent = 'Problem with the given data.';
+        pictureEl.src = '';
+        pictureEl.style.display = 'none';
+        titleEl.textContent = '';
+        dateEl.textContent = '';
+        explanationEl.textContent = 'Problem with the given data.';
       }
     } else {
-      document.getElementById('desc').textContent = 'No data was found.';
+      pictureEl.src = '';
+      pictureEl.style.display = 'none';
+      titleEl.textContent = '';
+      dateEl.textContent = '';
+      explanationEl.textContent = 'No data was found.';
     }
   </script>
 
