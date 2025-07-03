@@ -1,5 +1,6 @@
  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
+ /* ALL HTMLS */
  /* Body styling: gradient background, center content, flex layout */
  body {
    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
@@ -20,7 +21,52 @@
    text-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
  }
 
- /* Countainer for countdown on index page: semi-transparent background, rounded corners, centered */
+ /* QR code options container for all pages: flex layout, centered with gap */
+ .qr-code-option-container {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   gap: 1rem;
+   flex-direction: row;
+ }
+
+ /* Singe QR option on any page: semi-transparent bg, white border, shadow, flex align */
+ .qr-code-option {
+   background: rgba(255, 255, 255, 0.15);
+   border: 2px solid #fff;
+   border-radius: 12px;
+   color: #fff;
+   font-size: 1.25rem;
+   font-weight: 700;
+   padding: 1em 1em;
+   width: 250px;
+   max-width: 90vw;
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+   transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 0.8em;
+   user-select: none;
+ }
+
+ /* Emoji inside QR option on any page: larger font */
+ .qr-code-option .emoji {
+   font-size: 3.5rem;
+ }
+
+ /* QR code image style on any page: fixed size, white background and border */
+ .qr-code {
+   width: 80px;
+   height: 80px;
+   border: 2px solid #fff;
+   background: #fff;
+   padding: 5px;
+   border-radius: 8px;
+ }
+
+ /* INDEX.HTML */
+ /* Countainer for countdown and countdown-text on index page: semi-transparent background, rounded corners, centered */
  #countdown-container {
    background: rgba(255, 255, 255, 0.1);
    padding: 2rem;
@@ -83,6 +129,13 @@
    font-weight: bold;
  }
 
+ /* Blink animation for alert */
+ @keyframes blink {
+   50% {
+     opacity: 0;
+   }
+ }
+
  /* Final countdown message text: green bold */
  #final-message {
    font-size: 1.5rem;
@@ -91,50 +144,7 @@
    font-weight: bold;
  }
 
- /* QR code options container for all pages: flex layout, centered with gap */
- .qr-code-option-container {
-   display: flex;
-   flex-wrap: wrap;
-   justify-content: center;
-   gap: 1rem;
-   flex-direction: row;
- }
-
- /* Singe QR option on any page: semi-transparent bg, white border, shadow, flex align */
- .qr-code-option {
-   background: rgba(255, 255, 255, 0.15);
-   border: 2px solid #fff;
-   border-radius: 12px;
-   color: #fff;
-   font-size: 1.25rem;
-   font-weight: 700;
-   padding: 1em 1em;
-   width: 250px;
-   max-width: 90vw;
-   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-   transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   gap: 0.8em;
-   user-select: none;
- }
-
- /* Emoji inside QR option on any page: larger font */
- .qr-code-option .emoji {
-   font-size: 3.5rem;
- }
-
- /* QR code image style on any page: fixed size, white background and border */
- .qr-code {
-   width: 80px;
-   height: 80px;
-   border: 2px solid #fff;
-   background: #fff;
-   padding: 5px;
-   border-radius: 8px;
- }
-
+ /* FORECAST.HTML */
  /* Passes container for all pass-containers on forecast page: max width, centered, different font */
  #passes {
    max-width: 600px;
@@ -158,11 +168,4 @@
    margin-top: 10px;
    font-weight: bold;
    color: #007bff;
- }
-
- /* Blink animation for alert */
- @keyframes blink {
-   50% {
-     opacity: 0;
-   }
  }

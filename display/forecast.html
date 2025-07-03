@@ -37,7 +37,7 @@
     if (passes.length === 0) {
       container.textContent = 'No passes found in the next 7 days.';
     } else {
-      passes.forEach(p => {
+      passes.forEach((p, index) => {
         const div = document.createElement('div');
         div.className = 'pass';
         div.dataset.start = p.start;
