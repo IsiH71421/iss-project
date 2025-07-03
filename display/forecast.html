@@ -66,10 +66,10 @@
         let text;
         if (now < start) {
           const diff = Math.floor((start - now) / 1000);
-          text = `Next pass in ${formatTime(diff)}.<br>ISS will be visible for ${formatTime(Math.floor((end - start) / 1000))}.`;
+          text = `Time left: ${formatTimeNoSeconds(diff)}.<br>Visibility Duration: ${formatTime(Math.floor((end - start) / 1000))}.`;
         } else if (now >= start && now <= end) {
           const diff = Math.floor((end - now) / 1000);
-          text = `Pass in progress, ends in ${formatTime(diff)}.`;
+          text = `Pass in progress, ends in ${formatTimeNoSeconds(diff)}.`;
         } else {
           text = 'Pass finished. Did you take cool pictures?';
         }

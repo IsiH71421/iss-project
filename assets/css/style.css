@@ -89,15 +89,16 @@
  }
 
  /* Countdown time blocks on index page: white background, shadow, rounded corners */
- .time-block {
-   background-color: #fefefe;
+ /* Single pass-container on forecast page: white background, border, shadow, padding */
+ .time-block,
+ .pass {
    border: 1px solid #ccc;
+   padding: 15px;
+   margin-bottom: 30px;
+   border-radius: 6px;
+   background-color: #fefefe;
    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-   padding: 1rem 1.2rem;
-   border-radius: 8px;
-   min-width: 70px;
-   user-select: none;
-   /* disable text selection */
+   color: #0047b3;
  }
 
  /* Numerical countdown value, e.g. '5' if 5 seconds are left */
@@ -152,20 +153,9 @@
    font-family: Arial, sans-serif;
  }
 
- /* Single pass-container on forecast page: white background, border, shadow, padding */
- .pass {
-   border: 1px solid #ccc;
-   padding: 15px;
-   margin-bottom: 30px;
-   border-radius: 6px;
-   background-color: #fefefe;
-   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-   color: #000;
- }
-
  /* Countdown text inside pass-container: blue, bold */
  .countdown {
    margin-top: 10px;
    font-weight: bold;
-   color: #007bff;
+   color: #0047b3;
  }
