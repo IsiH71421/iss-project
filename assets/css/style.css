@@ -1,5 +1,6 @@
  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
+ /* Body styling: gradient background, center content, flex layout */
  body {
    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
    font-family: 'Roboto', sans-serif;
@@ -13,11 +14,13 @@
    gap: 2rem;
  }
 
+ /* Main headings: large font, text shadow for readability */
  h1 {
    font-size: 2.8rem;
    text-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
  }
 
+ /* Countainer for countdown on index page: semi-transparent background, rounded corners, centered */
  #countdown-container {
    background: rgba(255, 255, 255, 0.1);
    padding: 2rem;
@@ -30,6 +33,7 @@
    font-family: 'Roboto', sans-serif;
  }
 
+ /* Flex container for countdown time blocks on index page: flex container, centered, spaced with wrap */
  .countdown-blocks {
    display: flex;
    justify-content: center;
@@ -38,15 +42,19 @@
    margin: 1rem 0;
  }
 
+ /* Countdown time blocks on index page: white background, shadow, rounded corners */
  .time-block {
-   background-color: rgba(204, 228, 255, 0.8);
+   background-color: #fefefe;
+   border: 1px solid #ccc;
+   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
    padding: 1rem 1.2rem;
    border-radius: 8px;
    min-width: 70px;
    user-select: none;
-   box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+   /* disable text selection */
  }
 
+ /* Numerical countdown value, e.g. '5' if 5 seconds are left */
  .time-value {
    color: #0047b3;
    font-size: 2.8rem;
@@ -54,6 +62,7 @@
    line-height: 1;
  }
 
+ /* Countdown label, e.g. 'seconds' if 5 seconds are left */
  .time-label {
    color: #0047b3;
    font-size: 1rem;
@@ -61,17 +70,20 @@
    text-transform: lowercase;
  }
 
+ /* Countdown text on index page: medium font size with margin */
  #countdown {
    font-size: 2rem;
    margin-top: 1rem;
  }
 
+ /* Countdown alert during last countdown minute on index page: blinking yellow bold text */
  #countdown.alert {
    animation: blink 1s step-start infinite;
    color: yellow;
    font-weight: bold;
  }
 
+ /* Final countdown message text: green bold */
  #final-message {
    font-size: 1.5rem;
    margin-top: 1rem;
@@ -79,6 +91,7 @@
    font-weight: bold;
  }
 
+ /* QR code options container for all pages: flex layout, centered with gap */
  .qr-code-option-container {
    display: flex;
    flex-wrap: wrap;
@@ -87,6 +100,7 @@
    flex-direction: row;
  }
 
+ /* Singe QR option on any page: semi-transparent bg, white border, shadow, flex align */
  .qr-code-option {
    background: rgba(255, 255, 255, 0.15);
    border: 2px solid #fff;
@@ -106,10 +120,12 @@
    user-select: none;
  }
 
+ /* Emoji inside QR option on any page: larger font */
  .qr-code-option .emoji {
    font-size: 3.5rem;
  }
 
+ /* QR code image style on any page: fixed size, white background and border */
  .qr-code {
    width: 80px;
    height: 80px;
@@ -119,12 +135,14 @@
    border-radius: 8px;
  }
 
+ /* Passes container for all pass-containers on forecast page: max width, centered, different font */
  #passes {
    max-width: 600px;
    margin: 20px auto;
    font-family: Arial, sans-serif;
  }
 
+ /* Single pass-container on forecast page: white background, border, shadow, padding */
  .pass {
    border: 1px solid #ccc;
    padding: 15px;
@@ -135,12 +153,14 @@
    color: #000;
  }
 
+ /* Countdown text inside pass-container: blue, bold */
  .countdown {
    margin-top: 10px;
    font-weight: bold;
    color: #007bff;
  }
 
+ /* Blink animation for alert */
  @keyframes blink {
    50% {
      opacity: 0;
