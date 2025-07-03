@@ -4,11 +4,26 @@ function formatTime(secondsTotal) {
   const mins = Math.floor((secondsTotal % 3600) / 60);
   const secs = secondsTotal % 60;
 
-  let parts = [];
-  if (days > 0) parts.push(`${days} day${days !== 1 ? "s" : ""}`);
-  if (hours > 0) parts.push(`${hours} hour${hours !== 1 ? "s" : ""}`);
-  if (mins > 0) parts.push(`${mins} minute${mins !== 1 ? "s" : ""}`);
-  parts.push(`${secs} second${secs !== 1 ? "s" : ""}`);
+  // Array mit allen Einheiten in Reihenfolge (höchste zu niedrigste)
+  const units = [
+    { value: days, label: "day" },
+    { value: hours, label: "hour" },
+    { value: mins, label: "minute" },
+    { value: secs, label: "second" },
+  ];
+
+  // Index des höchsten Elements, das > 0 ist finden
+  const firstNonZeroIndex = units.findIndex((unit) => unit.value > 0);
+
+  // Falls alle 0 sind (z.B. 0 Sekunden), zeige "0 seconds"
+  if (firstNonZeroIndex === -1) {
+    return "0 seconds";
+  }
+
+  // Ab dem höchsten nicht-null Element alle Einheiten einschließen (auch wenn 0)
+  const parts = units.slice(firstNonZeroIndex).map((unit) => {
+    return `${unit.value} ${unit.label}${unit.value !== 1 ? "s" : ""}`;
+  });
 
   if (parts.length === 1) return parts[0];
   if (parts.length === 2) return parts[0] + " and " + parts[1];
@@ -20,12 +35,24 @@ function formatTimeNoSeconds(secondsTotal) {
   const hours = Math.floor((secondsTotal % (3600 * 24)) / 3600);
   const mins = Math.floor((secondsTotal % 3600) / 60);
 
-  let parts = [];
-  if (days > 0) parts.push(`${days} day${days !== 1 ? "s" : ""}`);
-  if (hours > 0) parts.push(`${hours} hour${hours !== 1 ? "s" : ""}`);
-  if (mins > 0) parts.push(`${mins} minute${mins !== 1 ? "s" : ""}`);
+  const units = [
+    { value: days, label: "day" },
+    { value: hours, label: "hour" },
+    { value: mins, label: "minute" },
+  ];
 
-  if (parts.length === 0) return "less than a minute";
+  // Höchste nicht-null Einheit finden
+  const firstNonZeroIndex = units.findIndex((unit) => unit.value > 0);
+
+  if (firstNonZeroIndex === -1) {
+    // Wenn alles 0 ist (also weniger als 1 Minute)
+    return "less than a minute";
+  }
+
+  // Alle Einheiten ab dem höchsten nicht-null Element anzeigen (auch wenn 0)
+  const parts = units.slice(firstNonZeroIndex).map((unit) => {
+    return `${unit.value} ${unit.label}${unit.value !== 1 ? "s" : ""}`;
+  });
 
   if (parts.length === 1) return parts[0];
   if (parts.length === 2) return parts[0] + " and " + parts[1];
