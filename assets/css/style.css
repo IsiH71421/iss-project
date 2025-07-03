@@ -119,6 +119,28 @@
    border-radius: 8px;
  }
 
+ #passes {
+   max-width: 600px;
+   margin: 20px auto;
+   font-family: Arial, sans-serif;
+ }
+
+ .pass {
+   border: 1px solid #ccc;
+   padding: 15px;
+   margin-bottom: 30px;
+   border-radius: 6px;
+   background-color: #fefefe;
+   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+   color: #000;
+ }
+
+ .countdown {
+   margin-top: 10px;
+   font-weight: bold;
+   color: #007bff;
+ }
+
  @keyframes blink {
    50% {
      opacity: 0;

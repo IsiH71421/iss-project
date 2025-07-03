@@ -56,9 +56,9 @@
 
     if (pictureQueryString) {
       try {
-        const data = JSON.parse(pictureQueryString);
+        const data = JSON.parse(decodeURIComponent(pictureQueryString));
         pictureEl.src = data.url;
-        explanationEl.textContent = decodeURIComponent(data.explanation);
+        explanationEl.textContent = data.explanation;
         titleEl.textContent = data.title || '';
         dateEl.textContent = data.date || '';
         pictureEl.style.display = 'block';
