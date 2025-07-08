@@ -8,11 +8,14 @@
 </head>
 
 <body>
-  <h1 id="headline">NASA Picture of the Day</h1>
-  <p id="date"></p>
-  <h2 id="title"></h2>
-  <img id="picture" width="600" />
-  <p id="explanation"></p>
+  <div class="content">
+    <img id="picture" />
+    <div class="explanation-box">
+      <h2 id="title"></h2>
+      <h3 id="subheadline"></h3>
+      <p id="explanation"></p>
+    </div>
+  </div>
 
   <div class="qr-code-option-container">
     <div class="qr-code-option">
@@ -54,10 +57,10 @@
     }
 
     const headlineEl = document.getElementById('headline');
-    const dateEl = document.getElementById('date');
     const titleEl = document.getElementById('title');
     const pictureEl = document.getElementById('picture');
     const explanationEl = document.getElementById('explanation');
+    const subheadlineEl = document.getElementById('subheadline');
     const qrNextDayEl = document.getElementById('qr-next-day');
     const qrTodayEl = document.getElementById('qr-today');
 
@@ -65,15 +68,15 @@
       const goXDaysBack = parseInt(params['days_back']) || 0;
 
       if (goXDaysBack === 0) {
-        headlineEl.textContent = 'NASA Picture of the Day';
+        subheadlineEl.textContent = 'NASA Picture of the Day - ' + params.date;
         qrNextDayEl.style.display = 'none';
         qrTodayEl.style.display = 'none';
       } else if (goXDaysBack === 1) {
-        headlineEl.textContent = 'NASA Picture from 1 day ago';
+        subheadlineEl.textContent = 'NASA Picture from 1 day ago - ' + params.date;
         qrNextDayEl.style.display = 'none';
         qrTodayEl.style.display = 'block';
       } else {
-        headlineEl.textContent = `NASA Picture from ${goXDaysBack} days ago`;
+        subheadlineEl.textContent = `NASA Picture from ${goXDaysBack} days ago - ` + params.date;
         qrNextDayEl.style.display = 'block';
         qrTodayEl.style.display = 'block';
       }
@@ -81,14 +84,13 @@
       pictureEl.src = params.url;
       explanationEl.textContent = params.explanation || '';
       titleEl.textContent = params.title || '';
-      dateEl.textContent = params.date || '';
       pictureEl.style.display = 'block';
     } else {
       pictureEl.src = '';
       pictureEl.style.display = 'none';
       titleEl.textContent = '';
-      dateEl.textContent = '';
       explanationEl.textContent = 'No data was found or problem with parameters.';
+      subheadlineEl.textContent = '';
     }
   </script>
 
