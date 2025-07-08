@@ -284,18 +284,25 @@ h1 {
   flex-direction: row;
   align-items: stretch;
   gap: var(--spacing-md);
-  width: 100%;
+  width: fit-content;
+  /* Size container based on content */
+  max-width: 95vw;
+  /* Prevent overflow */
+  margin: 0 auto;
+  /* Center the entire layout */
   /* Remove height: 100% to let content determine the height */
 }
 
 /* Picture styling */
 #picture {
-  flex: 1;
-  /* Allow image to grow and take available space */
+  flex: 0 0 auto;
+  /* Size based on natural dimensions */
+  max-width: 70vw;
+  /* Allow image to be large but leave space for text */
   max-height: 80vh;
   object-fit: contain;
   border-radius: var(--border-radius-lg);
-  /* Image can grow beyond 45vw to take available space */
+  /* Image shows at natural size within constraints */
 }
 
 /* Explanation text box */
