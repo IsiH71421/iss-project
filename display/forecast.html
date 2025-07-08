@@ -9,8 +9,20 @@
 </head>
 
 <body>
-  <h1>ISS Passes in the Next 7 Days</h1>
-  <div id="passes"></div>
+  <div class="main-layout">
+    <div class="content">
+      <h1>ISS Passes in the Next 7 Days</h1>
+      <div id="passes"></div>
+    </div>
+
+    <div class="qr-code-option-container">
+      <div class="qr-code-option">
+        <span class="emoji">⬅</span>
+        <span class="text-content">Back to Countdown</span>
+        <img src="../assets/qr_index.png" alt="Back QR" class="qr-code">
+      </div>
+    </div>
+  </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
@@ -81,10 +93,6 @@
     setInterval(updateCountdowns, 1000);
   </script>
 
-  <div class="qr-code-option">
-    <span class="emoji">⬅</span> Back to Countdown
-    <img src="../assets/qr_index.png" alt="Back QR" class="qr-code">
-  </div>
 </body>
 
 </html>

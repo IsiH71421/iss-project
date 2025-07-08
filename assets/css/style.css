@@ -1,238 +1,411 @@
- @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
- /* ALL HTMLS */
- /* Body styling: gradient background, center content, flex layout */
- body {
-   background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-   font-family: 'Roboto', sans-serif;
-   color: #fff;
-   text-align: center;
-   padding: 3rem 1rem;
-   height: 100vh;
-   /* Page must fit to screen height */
-   overflow: hidden;
-   /* No scrolling in too much text */
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   gap: 2rem;
- }
+/* ==========================================================================
+   CSS CUSTOM PROPERTIES (VARIABLES)
+   ========================================================================== */
+:root {
+  /* Colors */
+  --color-primary: #0047b3;
+  --color-white: #fff;
+  --color-yellow: #ffd700;
+  --color-green: #00ff00;
+  --color-text-primary: #fff;
+  --color-background-primary: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+  --color-background-overlay: rgba(255, 255, 255, 0.1);
+  --color-background-overlay-strong: rgba(255, 255, 255, 0.15);
+  --color-background-card: #fefefe;
+  --color-border: #ccc;
+  --color-shadow: rgba(0, 0, 0, 0.05);
+  --color-text-shadow: rgba(0, 0, 0, 0.5);
 
- /* Main headings: large font, text shadow for readability */
- h1 {
-   font-size: 2.8rem;
-   text-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
- }
+  /* Spacing */
+  --spacing-xs: 0.2rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
 
- /* QR code options container for all pages: flex layout, centered with gap */
- .qr-code-option-container {
-   display: flex;
-   flex-wrap: wrap;
-   justify-content: center;
-   gap: 1rem;
-   flex-direction: row;
- }
+  /* Border radius */
+  --border-radius-sm: 6px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
 
- /* Singe QR option on any page: semi-transparent bg, white border, shadow, flex align */
- .qr-code-option {
-   background: rgba(255, 255, 255, 0.15);
-   border: 2px solid #fff;
-   border-radius: 12px;
-   color: #fff;
-   font-size: 1.25rem;
-   font-weight: 700;
-   padding: 1em 1em;
-   width: 250px;
-   max-width: 90vw;
-   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-   transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   gap: 0.8em;
-   user-select: none;
- }
+  /* Font sizes */
+  --font-size-sm: 1rem;
+  --font-size-md: 1.2rem;
+  --font-size-lg: 1.4rem;
+  --font-size-xl: 2rem;
+  --font-size-xxl: 2.8rem;
 
- /* Emoji inside QR option on any page: larger font */
- .qr-code-option .emoji {
-   font-size: 3.5rem;
- }
+  /* QR code container height - adjust this value if needed */
+  --qr-container-height: 30%;
+  --content-height: 70%;
+}
 
- /* QR code image style on any page: fixed size, white background and border */
- .qr-code {
-   width: 80px;
-   height: 80px;
-   border: 2px solid #fff;
-   background: #fff;
-   padding: 5px;
-   border-radius: 8px;
- }
+/* ==========================================================================
+   BASE STYLES - Used across all pages
+   ========================================================================== */
 
- /* INDEX.HTML */
- /* Countainer for countdown and countdown-text on index page: semi-transparent background, rounded corners, centered */
- #countdown-container {
-   background: rgba(255, 255, 255, 0.1);
-   padding: 2rem;
-   border-radius: 12px;
-   max-width: 600px;
-   width: 90vw;
-   margin: auto;
-   color: #fff;
-   text-align: center;
-   font-family: 'Roboto', sans-serif;
- }
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+  font-family: var(--font-family-primary);
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+}
 
- /* Flex container for countdown time blocks on index page: flex container, centered, spaced with wrap */
- .countdown-blocks {
-   display: flex;
-   justify-content: center;
-   gap: 1rem;
-   flex-wrap: wrap;
-   margin: 1rem 0;
- }
+body {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
- /* Countdown time blocks on index page: white background, shadow, rounded corners */
- /* Single pass-container on forecast page: white background, border, shadow, padding */
- .time-block,
- .pass {
-   border: 1px solid #ccc;
-   padding: 15px;
-   margin-bottom: 30px;
-   border-radius: 6px;
-   background-color: #fefefe;
-   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-   color: #0047b3;
- }
+/* Main container that divides page into content and QR codes */
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  justify-content: space-between;
+  /* Distribute space between content and QR codes */
+  align-items: stretch;
+  padding: var(--spacing-md);
+  box-sizing: border-box;
+}
 
- /* Numerical countdown value, e.g. '5' if 5 seconds are left */
- .time-value {
-   color: #0047b3;
-   font-size: 2.8rem;
-   font-weight: 700;
-   line-height: 1;
- }
+/* Main headings: large font, text shadow for readability */
+h1 {
+  font-size: var(--font-size-xxl);
+  text-shadow: 0 0 8px var(--color-text-shadow);
+}
 
- /* Countdown label, e.g. 'seconds' if 5 seconds are left */
- .time-label {
-   color: #0047b3;
-   font-size: 1rem;
-   margin-top: 0.2rem;
-   text-transform: lowercase;
- }
+/* ==========================================================================
+   COMPONENT STYLES - Shared components across pages
+   ========================================================================== */
 
- /* Countdown text on index page: medium font size with margin */
- #countdown {
-   font-size: 2rem;
-   margin-top: 1rem;
- }
+.qr-code-option-container {
+  flex: 0 0 auto;
+  /* Auto size but don't grow */
+  min-height: 100px;
+  /* Reduced minimum height */
+  max-height: 25vh;
+  /* Reduced maximum height */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6rem;
+  /* Slightly smaller gap */
+  padding: var(--spacing-xs);
+  /* Reduced padding */
+  box-sizing: border-box;
+  overflow: hidden;
+}
 
- /* Countdown alert during last countdown minute on index page: blinking yellow bold text */
- #countdown.alert {
-   animation: blink 1s step-start infinite;
-   color: yellow;
-   font-weight: bold;
- }
+.qr-code-option {
+  flex: 1 1 200px;
+  /* Slightly smaller base width */
+  max-width: 250px;
+  /* Reduced max width */
+  min-height: 90px;
+  /* Reduced height */
+  background: var(--color-background-overlay-strong);
+  border: 2px solid var(--color-white);
+  border-radius: var(--border-radius-lg);
+  color: var(--color-white);
+  font-size: 1rem;
+  /* Slightly smaller font */
+  font-weight: 700;
+  padding: 0.6em 0.8em;
+  /* Reduced padding */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.8em;
+  box-sizing: border-box;
+  user-select: none;
+}
 
- /* Blink animation for alert */
- @keyframes blink {
-   50% {
-     opacity: 0;
-   }
- }
+/* Text content in QR options - allow wrapping */
+.qr-code-option .text-content {
+  flex: 1;
+  /* Take available space */
+  white-space: normal;
+  /* Allow text wrapping */
+  word-wrap: break-word;
+  line-height: 1.3;
+}
 
- /* Countdown message text when pass has ended: green bold */
- #final-message {
-   font-size: 1.5rem;
-   margin-top: 1rem;
-   color: #00ff00;
-   font-weight: bold;
- }
+/* QR code should stay fixed size and at the end */
+.qr-code-option .qr-code {
+  flex-shrink: 0;
+  /* Don't shrink the QR code */
+  margin-left: auto;
+  /* Push QR code to the right */
+}
 
- /* FORECAST.HTML */
- /* Passes container for all pass-containers on forecast page: max width, centered, different font */
- #passes {
-   max-width: 600px;
-   margin: 20px auto;
-   font-family: Arial, sans-serif;
- }
+/* Emoji inside QR options */
+.qr-code-option .emoji {
+  font-size: 2.5rem;
+  /* Reduced from 3.2rem */
+}
 
- /* Countdown text inside pass-container: blue, bold */
- .countdown {
-   margin-top: 10px;
-   font-weight: bold;
-   color: #0047b3;
- }
+/* QR code images */
+.qr-code {
+  width: 60px;
+  /* Slightly smaller QR codes */
+  height: 60px;
+  border: 2px solid var(--color-white);
+  background: var(--color-white);
+  padding: 4px;
+  /* Reduced padding */
+  border-radius: var(--border-radius-md);
+  box-sizing: border-box;
+}
 
- /* PICTURE.HTML */
- /* Bild und Text nebeneinander */
- .content {
-   display: flex;
-   gap: 2rem;
-   align-items: stretch;
-   /* gleiche Höhe von Bild und Textbox */
-   justify-content: center;
-   max-height: 80vh;
-   width: 100%;
-   flex-wrap: nowrap;
- }
+/* ==========================================================================
+   INDEX.HTML - Countdown page specific styles
+   ========================================================================== */
+/* Content centering for index page */
+.content h1 {
+  margin-bottom: var(--spacing-lg);
+}
 
- #picture {
-   height: 100%;
-   max-height: 80vh;
-   max-width: 45vw;
-   object-fit: contain;
-   border-radius: 12px;
- }
+/* Container for countdown and countdown-text on index page */
+#countdown-container {
+  background: var(--color-background-overlay);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  max-width: 600px;
+  width: 90vw;
+  margin: auto;
+  color: var(--color-white);
+  text-align: center;
+  font-family: var(--font-family-primary);
+}
 
- .explanation-box {
-   max-width: 45vw;
-   height: 100%;
-   /* gleiche Höhe wie Bild */
-   background: rgba(255, 255, 255, 0.1);
-   border-radius: 12px;
-   padding: 1rem;
-   color: white;
-   text-align: left;
-   display: flex;
-   flex-direction: column;
-   justify-content: flex-start;
-   overflow: hidden;
- }
+/* Flex container for countdown time blocks on index page */
+.countdown-blocks {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  margin: var(--spacing-md) 0;
+}
 
- .explanation-box h2 {
-   font-size: 1.5rem;
-   margin-bottom: 0.5rem;
- }
+/* Countdown time blocks and pass containers: shared styling */
+.time-block,
+.pass {
+  border: 1px solid var(--color-border);
+  padding: 15px;
+  margin-bottom: 30px;
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-background-card);
+  box-shadow: 0 2px 8px var(--color-shadow);
+  color: var(--color-primary);
+}
 
- .explanation-box h3 {
-   font-size: 1rem;
-   font-weight: 400;
-   opacity: 0.8;
-   margin-bottom: 1rem;
- }
+/* Numerical countdown value */
+.time-value {
+  color: var(--color-primary);
+  font-size: var(--font-size-xxl);
+  font-weight: 700;
+  line-height: 1;
+}
 
- .explanation-box p {
-   overflow-y: auto;
-   white-space: normal;
-   text-overflow: initial;
-   line-height: 1.5;
-   max-height: 100%;
- }
+/* Countdown label */
+.time-label {
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  margin-top: var(--spacing-xs);
+  text-transform: lowercase;
+}
 
- /* Bild und Text symmetrisch gleich hoch */
- #picture,
- .explanation-box {
-   max-height: 80vh;
-   height: auto;
- }
+/* Countdown text on index page */
+#countdown {
+  font-size: var(--font-size-xl);
+  margin-top: var(--spacing-md);
+}
 
- /* Subheadline (ehemalige h1) kleiner dargestellt */
- .explanation-box h3 {
-   font-size: 1rem;
-   font-weight: 400;
-   opacity: 0.8;
-   margin: 0.5rem 0 1rem;
-   white-space: nowrap;
-   overflow: hidden;
-   text-overflow: ellipsis;
- }
+/* Countdown alert during last countdown minute */
+#countdown.alert {
+  animation: blink 1s step-start infinite;
+  color: var(--color-yellow);
+  font-weight: bold;
+}
+
+/* Blink animation for alert */
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Countdown message text when pass has ended */
+#final-message {
+  font-size: 1.5rem;
+  margin-top: var(--spacing-md);
+  color: var(--color-green);
+  font-weight: bold;
+}
+
+/* ==========================================================================
+   SHARED LAYOUT STYLES - Used across all pages
+   ========================================================================== */
+/* Content area takes remaining space - default vertical layout */
+.content {
+  flex: 1;
+  /* Take remaining space */
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--spacing-xs);
+  /* Reduced padding */
+  box-sizing: border-box;
+  min-height: 0;
+  overflow: hidden;
+  /* Prevent content overflow */
+  text-align: center;
+}
+
+/* ==========================================================================
+   PICTURE.HTML - NASA picture of the day page specific styles
+   ========================================================================== */
+/* Picture page uses horizontal layout */
+.content.picture-layout {
+  flex-direction: row;
+  /* Horizontal layout for picture page */
+  align-items: stretch;
+  /* Equal height for image and text */
+  text-align: left;
+  /* Left-align text in picture layout */
+}
+
+/* Picture styling */
+#picture {
+  height: 100%;
+  max-width: 45vw;
+  object-fit: contain;
+  border-radius: var(--border-radius-lg);
+}
+
+/* Explanation text box */
+.explanation-box {
+  height: 100%;
+  max-width: 45vw;
+  background: var(--color-background-overlay);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-md);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: hidden;
+  text-align: left;
+}
+
+/* Title in the explanation box */
+.explanation-box h2 {
+  font-size: var(--font-size-lg);
+  margin: 0 0 0.3rem;
+}
+
+/* Subtitle in the explanation box */
+.explanation-box h3 {
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  opacity: 0.8;
+  margin-bottom: 0.8rem;
+}
+
+/* Explanation text: scrollable area within the box */
+.explanation-box p {
+  flex: 1;
+  overflow-y: auto;
+  white-space: normal;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Picture and text box equal height */
+#picture,
+.explanation-box {
+  max-height: 80vh;
+  height: auto;
+}
+
+/* Subheadline styling with ellipsis for overflow */
+.explanation-box h3 {
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  opacity: 0.8;
+  margin: var(--spacing-sm) 0 var(--spacing-md);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   DETAILS.HTML - ISS pass details page specific styles
+   ========================================================================== */
+/* Details container styling */
+.details-container {
+  background: var(--color-background-overlay);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+/* Individual detail items */
+.detail-item {
+  margin-bottom: var(--spacing-sm);
+  line-height: 1.5;
+}
+
+.detail-item strong {
+  color: var(--color-yellow);
+}
+
+/* ==========================================================================
+   CREW.HTML - ISS crew page specific styles
+   ========================================================================== */
+/* Crew list styling */
+#crew {
+  list-style: none;
+  padding: 0;
+  max-width: 600px;
+  margin: 0 auto var(--spacing-lg);
+}
+
+#crew li {
+  background: var(--color-background-overlay);
+  margin-bottom: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-lg);
+  border-left: 4px solid var(--color-yellow);
+}
+
+/* ==========================================================================
+   FORECAST.HTML - ISS pass forecast page specific styles
+   ========================================================================== */
+#passes {
+  max-width: 600px;
+  width: 100%;
+  font-family: var(--font-family-secondary);
+}
+
+/* Countdown text inside pass-container */
+.countdown {
+  margin-top: 10px;
+  font-weight: bold;
+  color: var(--color-primary);
+}

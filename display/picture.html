@@ -8,34 +8,40 @@
 </head>
 
 <body>
-  <div class="content">
-    <img id="picture" />
-    <div class="explanation-box">
-      <h2 id="title"></h2>
-      <h3 id="subheadline"></h3>
-      <p id="explanation"></p>
-    </div>
-  </div>
-
-  <div class="qr-code-option-container">
-    <div class="qr-code-option">
-      <span class="emoji">📅</span> Get picture of the day before
-      <img src="../assets/qr_picture_day_before.png" alt="Back QR" class="qr-code">
+  <div class="main-layout">
+    <div class="content picture-layout">
+      <img id="picture" />
+      <div class="explanation-box">
+        <h2 id="title"></h2>
+        <h3 id="subheadline"></h3>
+        <p id="explanation"></p>
+      </div>
     </div>
 
-    <div class="qr-code-option" id="qr-next-day" style="display:none;">
-      <span class="emoji">📅</span> Get picture of the next day
-      <img src="../assets/qr_picture_day_after.png" alt="Forward QR" class="qr-code">
-    </div>
+    <div class="qr-code-option-container">
+      <div class="qr-code-option">
+        <span class="emoji">📅</span>
+        <span class="text-content">Get picture of the day before</span>
+        <img src="../assets/qr_picture_day_before.png" alt="Back QR" class="qr-code">
+      </div>
 
-    <div class="qr-code-option" id="qr-today" style="display:none;">
-      <span class="emoji">📅</span> Get picture of today
-      <img src="../assets/qr_picture_today.png" alt="Today QR" class="qr-code">
-    </div>
+      <div class="qr-code-option" id="qr-next-day" style="display:none;">
+        <span class="emoji">📅</span>
+        <span class="text-content">Get picture of the next day</span>
+        <img src="../assets/qr_picture_day_after.png" alt="Forward QR" class="qr-code">
+      </div>
 
-    <div class="qr-code-option">
-      <span class="emoji">⬅</span> Back to Countdown
-      <img src="../assets/qr_index.png" alt="Back QR" class="qr-code">
+      <div class="qr-code-option" id="qr-today" style="display:none;">
+        <span class="emoji">📅</span>
+        <span class="text-content">Get picture of today</span>
+        <img src="../assets/qr_picture_today.png" alt="Today QR" class="qr-code">
+      </div>
+
+      <div class="qr-code-option">
+        <span class="emoji">⬅</span>
+        <span class="text-content">Back to Countdown</span>
+        <img src="../assets/qr_index.png" alt="Back QR" class="qr-code">
+      </div>
     </div>
   </div>
 
@@ -56,7 +62,6 @@
       }
     }
 
-    const headlineEl = document.getElementById('headline');
     const titleEl = document.getElementById('title');
     const pictureEl = document.getElementById('picture');
     const explanationEl = document.getElementById('explanation');
