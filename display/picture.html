@@ -9,12 +9,23 @@
 
 <body>
   <div class="main-layout">
-    <div class="content picture-layout">
-      <img id="picture" />
-      <div class="explanation-box">
-        <h2 id="title"></h2>
-        <h3 id="subheadline"></h3>
-        <p id="explanation"></p>
+    <div class="content">
+      <!-- Error layout: shown when no data available -->
+      <div id="error-layout" style="display: none;">
+        <h1>NASA Picture of the Day</h1>
+        <div class="error-container">
+          <p id="error-message">No data was found or problem with parameters.</p>
+        </div>
+      </div>
+
+      <!-- Normal layout: shown when data is available -->
+      <div id="normal-layout">
+        <img id="picture" />
+        <div class="explanation-box">
+          <h2 id="title"></h2>
+          <h3 id="subheadline"></h3>
+          <p id="explanation"></p>
+        </div>
       </div>
     </div>
 
@@ -68,8 +79,17 @@
     const subheadlineEl = document.getElementById('subheadline');
     const qrNextDayEl = document.getElementById('qr-next-day');
     const qrTodayEl = document.getElementById('qr-today');
+    const errorLayoutEl = document.getElementById('error-layout');
+    const normalLayoutEl = document.getElementById('normal-layout');
+    const contentEl = document.querySelector('.content');
+    const errorMessageEl = document.getElementById('error-message');
 
     if (params) {
+      // Show normal layout with picture and text
+      errorLayoutEl.style.display = 'none';
+      normalLayoutEl.style.display = 'flex';
+      // No need for picture-layout class since #normal-layout handles the layout
+
       const goXDaysBack = parseInt(params['days_back']) || 0;
 
       if (goXDaysBack === 0) {
@@ -89,13 +109,15 @@
       pictureEl.src = params.url;
       explanationEl.textContent = params.explanation || '';
       titleEl.textContent = params.title || '';
-      pictureEl.style.display = 'block';
     } else {
-      pictureEl.src = '';
-      pictureEl.style.display = 'none';
-      titleEl.textContent = '';
-      explanationEl.textContent = 'No data was found or problem with parameters.';
-      subheadlineEl.textContent = '';
+      // Show error layout with title and error message
+      normalLayoutEl.style.display = 'none';
+      errorLayoutEl.style.display = 'block';
+      // No need to remove picture-layout class since it's not used
+
+      // Hide conditional QR codes
+      qrNextDayEl.style.display = 'none';
+      qrTodayEl.style.display = 'none';
     }
   </script>
 
