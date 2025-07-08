@@ -25,6 +25,11 @@
       <img src="../assets/qr_picture_day_after.png" alt="Forward QR" class="qr-code">
     </div>
 
+    <div class="qr-code-option" id="qr-today" style="display:none;">
+      <span class="emoji">📅</span> Get picture of today
+      <img src="../assets/qr_picture_today.png" alt="Today QR" class="qr-code">
+    </div>
+
     <div class="qr-code-option">
       <span class="emoji">⬅</span> Back to Countdown
       <img src="../assets/qr_index.png" alt="Back QR" class="qr-code">
@@ -37,48 +42,53 @@
       return url.searchParams.get(name);
     }
 
-    const pictureQueryString = JSON.parse(getParameterByName('params'));
+    let paramsRaw = getParameterByName('params');
+    let params = null;
+
+    if (paramsRaw) {
+      try {
+        params = JSON.parse(paramsRaw);
+      } catch (e) {
+        console.error('Error parsing params:', e);
+      }
+    }
 
     const headlineEl = document.getElementById('headline');
     const dateEl = document.getElementById('date');
     const titleEl = document.getElementById('title');
     const pictureEl = document.getElementById('picture');
     const explanationEl = document.getElementById('explanation');
-    const goXDaysBack = parseInt(pictureQueryString['days_back']) || 0;
     const qrNextDayEl = document.getElementById('qr-next-day');
+    const qrTodayEl = document.getElementById('qr-today');
 
-    if (goXDaysBack === 0) {
-      headlineEl.textContent = 'NASA Picture of the Day';
-      qrNextDayEl.style.display = 'none';
-    } else if (goXDaysBack === 1) {
-      headlineEl.textContent = 'NASA Picture from 1 day ago';
-      qrNextDayEl.style.display = 'block';
-    } else {
-      headlineEl.textContent = `NASA Picture from ${goXDaysBack} days ago`;
-      qrNextDayEl.style.display = 'block';
-    }
+    if (params) {
+      const goXDaysBack = parseInt(params['days_back']) || 0;
 
-    if (pictureQueryString) {
-      try {
-        const data = JSON.parse(decodeURIComponent(pictureQueryString));
-        pictureEl.src = data.url;
-        explanationEl.textContent = data.explanation;
-        titleEl.textContent = data.title || '';
-        dateEl.textContent = data.date || '';
-        pictureEl.style.display = 'block';
-      } catch (e) {
-        pictureEl.src = '';
-        pictureEl.style.display = 'none';
-        titleEl.textContent = '';
-        dateEl.textContent = '';
-        explanationEl.textContent = 'Problem with the given data.';
+      if (goXDaysBack === 0) {
+        headlineEl.textContent = 'NASA Picture of the Day';
+        qrNextDayEl.style.display = 'none';
+        qrTodayEl.style.display = 'none';
+      } else if (goXDaysBack === 1) {
+        headlineEl.textContent = 'NASA Picture from 1 day ago';
+        qrNextDayEl.style.display = 'none';
+        qrTodayEl.style.display = 'block';
+      } else {
+        headlineEl.textContent = `NASA Picture from ${goXDaysBack} days ago`;
+        qrNextDayEl.style.display = 'block';
+        qrTodayEl.style.display = 'block';
       }
+
+      pictureEl.src = params.url;
+      explanationEl.textContent = params.explanation || '';
+      titleEl.textContent = params.title || '';
+      dateEl.textContent = params.date || '';
+      pictureEl.style.display = 'block';
     } else {
       pictureEl.src = '';
       pictureEl.style.display = 'none';
       titleEl.textContent = '';
       dateEl.textContent = '';
-      explanationEl.textContent = 'No data was found.';
+      explanationEl.textContent = 'No data was found or problem with parameters.';
     }
   </script>
 
