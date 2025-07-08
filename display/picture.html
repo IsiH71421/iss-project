@@ -99,11 +99,11 @@
       } else if (goXDaysBack === 1) {
         subheadlineEl.textContent = 'NASA Picture from 1 day ago - ' + params.date;
         qrNextDayEl.style.display = 'none';
-        qrTodayEl.style.display = 'block';
+        qrTodayEl.style.display = 'flex';
       } else {
         subheadlineEl.textContent = `NASA Picture from ${goXDaysBack} days ago - ` + params.date;
-        qrNextDayEl.style.display = 'block';
-        qrTodayEl.style.display = 'block';
+        qrNextDayEl.style.display = 'flex';
+        qrTodayEl.style.display = 'flex';
       }
 
       pictureEl.src = params.url;

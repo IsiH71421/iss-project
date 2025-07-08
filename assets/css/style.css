@@ -290,16 +290,24 @@ h1 {
 
 /* Picture styling */
 #picture {
-  max-width: 45vw;
+  flex: 1;
+  /* Allow image to grow and take available space */
   max-height: 80vh;
   object-fit: contain;
   border-radius: var(--border-radius-lg);
-  /* Let the image determine its natural height */
+  /* Image can grow beyond 45vw to take available space */
 }
 
 /* Explanation text box */
 .explanation-box {
-  max-width: 45vw;
+  flex: 0 0 auto;
+  /* Don't grow, size based on content */
+  min-width: min(200px, 25vw);
+  /* Minimum width responsive to viewport */
+  max-width: min(400px, 40vw);
+  /* Maximum width responsive to viewport */
+  width: fit-content;
+  /* Size based on content width */
   background: var(--color-background-overlay);
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-md);
@@ -309,7 +317,6 @@ h1 {
   justify-content: flex-start;
   overflow: hidden;
   text-align: left;
-  /* Remove height: 100% to let flexbox handle it */
 }
 
 /* Title in the explanation box */
