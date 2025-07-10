@@ -505,3 +505,98 @@ h1 {
     gap: var(--spacing-xs);
   }
 }
+
+/* ==========================================================================
+   FORECAST.HTML - ISS pass forecast page specific styles
+   ========================================================================== */
+/* Passes container: flexible layout for pass cards */
+#passes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  width: 100%;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  max-height: 100%;
+  padding: 0;
+}
+
+/* Individual pass card: white box with styling consistent with other pages */
+.pass {
+  background: var(--color-background-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: 0 4px 12px var(--color-shadow);
+  color: var(--color-primary);
+  width: 280px;
+  flex: 0 0 280px;
+  box-sizing: border-box;
+  height: fit-content;
+  min-height: 200px;
+  border-left: 4px solid var(--color-primary);
+}
+
+/* Pass title styling */
+.pass h2 {
+  font-size: var(--font-size-md);
+  margin: 0 0 var(--spacing-sm);
+  color: var(--color-primary);
+  font-weight: bold;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: var(--spacing-xs);
+}
+
+/* Pass content styling */
+.pass > div {
+  font-size: 0.95rem;
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.4;
+  text-align: left;
+}
+
+/* Countdown text inside pass-container */
+.pass .countdown {
+  margin-top: var(--spacing-sm);
+  font-weight: bold;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  text-align: center;
+  background: var(--color-white);
+  border: 1px solid #eee;
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+}
+
+/* Responsive adjustments for forecast page */
+@media (max-width: 768px) {
+  .pass {
+    width: 250px;
+    flex: 0 0 250px;
+    padding: var(--spacing-sm);
+    min-height: 180px;
+  }
+
+  .pass h2 {
+    font-size: var(--font-size-sm);
+  }
+
+  .pass > div {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #passes {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pass {
+    width: 100%;
+    max-width: 300px;
+    flex: none;
+  }
+}
