@@ -3,15 +3,16 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>People on the ISS</title>
+  <title>ISS Crew</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
 </head>
 
-<body>
+<body class="crew-page">
   <div class="main-layout">
     <div class="content">
-      <h1>Currently on the ISS:</h1>
-      <ul id="crew"></ul>
+      <h1 id="main-title"></h1>
+
+      <div id="crew"></div>
     </div>
 
     <div class="qr-code-option-container">
@@ -24,31 +25,126 @@
   </div>
 
   <script>
-    function getCrewFromURL() {
+    function getExpeditionDataFromURL() {
       const params = new URLSearchParams(window.location.search);
-      const crewParam = params.get('crew'); // z. B. '["Oleg Kononenko", "Nikolai Chub", "Tracy Caldwell Dyson"]'
+      const dataParam = params.get('params');
 
-      if (!crewParam) return [];
+      if (!dataParam) return null;
 
       try {
-        const crewArray = JSON.parse(crewParam);
-        if (Array.isArray(crewArray)) {
-          return crewArray.map(name => ({ name }));
-        }
+        return JSON.parse(dataParam);
       } catch (e) {
-        console.error("Fehler beim Parsen des JSON:", e);
+        console.error("Error parsing expedition params:", e);
+        return null;
       }
-
-      return [];
     }
 
-    const crewList = getCrewFromURL();
-    const ul = document.getElementById('crew');
-    crewList.forEach(person => {
-      const li = document.createElement('li');
-      li.textContent = person.name;
-      ul.appendChild(li);
-    });
+    function formatDate(unixTimestamp) {
+      const date = new Date(unixTimestamp * 1000);
+      return date.toLocaleDateString('en-GB', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+
+    function renderExpeditionInfo(data) {
+      const titleEl = document.getElementById('main-title');
+      const expeditionNumber = data.expedition_number ?? 'Unknown';
+      const startDate = data.start_date ? formatDate(data.start_date) : 'N/A';
+      const endDate = data.end_date ? formatDate(data.end_date) : 'N/A';
+
+      titleEl.textContent = `ISS Expedition ${expeditionNumber} - ${startDate} to ${endDate}`;
+    }
+
+    function renderCrewList(crewArray) {
+      const container = document.getElementById('crew');
+
+      // Define spacecraft categories
+      const spacecraftCategories = {
+        'Crew Dragon': {
+          title: 'Crew Dragon (NASA / SpaceX) - Long-duration crew',
+          members: []
+        },
+        'Soyuz MS': {
+          title: 'Sojus MS (Roskosmos) - Long-duration crew',
+          members: []
+        },
+        'Axiom': {
+          title: 'Axiom Missions (Axiom & SpaceX) - Commercial short-term visits',
+          members: []
+        },
+        'Starliner': {
+          title: 'Boeing Starliner (NASA / Boeing) - Long-duration missions',
+          members: []
+        },
+        'Others': {
+          title: 'Others - Unclassified or special missions',
+          members: []
+        }
+      };
+
+      // Group crew members by spacecraft
+      crewArray.forEach(person => {
+        const spacecraft = person.spacecraft;
+        if (spacecraft.includes('Crew-10 Dragon')) {
+          spacecraftCategories['Crew Dragon'].members.push(person);
+        } else if (spacecraft.includes('Soyuz') || spacecraft.includes('MS')) {
+          spacecraftCategories['Soyuz MS'].members.push(person);
+        } else if (spacecraft.includes('Axiom')) {
+          spacecraftCategories['Axiom'].members.push(person);
+        } else if (spacecraft.includes('Starliner')) {
+          spacecraftCategories['Starliner'].members.push(person);
+        } else {
+          // Default to Others if unknown
+          spacecraftCategories['Others'].members.push(person);
+        }
+      });
+
+      // Create blocks for each category that has members
+      Object.values(spacecraftCategories).forEach(category => {
+        if (category.members.length > 0) {
+          const block = document.createElement('div');
+          block.className = 'spacecraft-block';
+
+          const title = document.createElement('h2');
+          title.innerHTML = category.title;
+          title.className = 'spacecraft-title';
+          block.appendChild(title);
+
+          const membersList = document.createElement('div');
+          membersList.className = 'crew-members';
+
+          // Use two columns if there are more than 4 members
+          if (category.members.length > 4) {
+            membersList.classList.add('two-columns');
+            block.classList.add('has-two-columns');
+          }
+
+          category.members.forEach(person => {
+            const memberDiv = document.createElement('div');
+            memberDiv.className = 'crew-member';
+            memberDiv.innerHTML = `
+              <strong>${person.name}</strong><br>
+              <span>Country: ${person.country}</span><br>
+              <span>Position: ${person.position}</span>
+            `;
+            membersList.appendChild(memberDiv);
+          });
+
+          block.appendChild(membersList);
+          container.appendChild(block);
+        }
+      });
+    }
+
+    const expeditionData = getExpeditionDataFromURL();
+    if (expeditionData) {
+      renderExpeditionInfo(expeditionData);
+      if (Array.isArray(expeditionData.crew)) {
+        renderCrewList(expeditionData.crew);
+      }
+    }
   </script>
 
 </body>
