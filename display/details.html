@@ -37,14 +37,24 @@
 
     function showDetails(data) {
       const container = document.getElementById('details');
+
+      // Check if start and visibility start are the same
+      const startLabel = data.startVisibility && Math.abs(data.startUTC - data.startVisibility) > 5
+        ? "Start:"
+        : "Overflight and Visibility Start:";
+
+      const visibilityLine = data.startVisibility && Math.abs(data.startUTC - data.startVisibility) > 5
+        ? `<div class="detail-item"><strong>Visibility Start:</strong> ${formatTimestamp(data.startVisibility)}</div>`
+        : '';
+
       container.innerHTML = `
     <h2>Pass Overview</h2>
-    <div class="detail-item"><strong>Start:</strong> ${formatTimestamp(data.startUTC)} (${data.startAzCompass}, ${data.startEl}°)</div>
+    <div class="detail-item"><strong>${startLabel}</strong> ${formatTimestamp(data.startUTC)} (${data.startAzCompass}, ${data.startEl}°)</div>
     <div class="detail-item"><strong>Maximum:</strong> ${formatTimestamp(data.maxUTC)} (${data.maxAzCompass}, ${data.maxEl}°)</div>
     <div class="detail-item"><strong>End:</strong> ${formatTimestamp(data.endUTC)} (${data.endAzCompass}, ${data.endEl}°)</div>
     <div class="detail-item"><strong>Magnitude:</strong> ${data.mag}</div>
     <div class="detail-item"><strong>Duration:</strong> ${formatTime(data.duration)}</div>
-    ${data.startVisibility ? `<div class="detail-item"><strong>Visibility Starts:</strong> ${formatTimestamp(data.startVisibility)}</div>` : ''}
+    ${visibilityLine}
   `;
     }
 
