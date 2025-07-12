@@ -107,14 +107,16 @@
 
           if (now < startTimestamp) {
             const diff = Math.floor((startTimestamp - now) / 1000);
-            topMessageEl.textContent = "";
-            countdownEl.innerHTML = `Next pass in
+            if (diff > 60) {
+              topMessageEl.textContent = "";
+              countdownEl.innerHTML = `Next pass in
                         <div class="countdown-blocks">
                             ${formatTimeBlocks(diff)}
                         </div>
                         The ISS will be visible for ${formatTime(durationSeconds)}.`;
-            finalMessageEl.textContent = "";
-            if (diff <= 60) {
+              finalMessageEl.textContent = "";
+            }
+            else {
               topMessageEl.textContent = "The ISS will be here in a few seconds!";
               countdownEl.innerHTML = `<div class="countdown-blocks">
                             ${formatTimeBlocks(diff)}
@@ -124,12 +126,12 @@
             }
           } else if (now >= startTimestamp && now < endTimestamp) {
             const remaining = Math.floor((endTimestamp - now) / 1000);
-            topMessageEl.textContent = "👀 The ISS is visible now! Remaining time:";
+            topMessageEl.textContent = "The ISS is visible now! Remaining time:";
             countdownEl.innerHTML = `<div class="countdown-blocks">
                             ${formatTimeBlocks(remaining)}
                         </div>`;
             countdownEl.classList.add("alert");
-            finalMessageEl.textContent = "Don't miss it!";
+            finalMessageEl.textContent = "👀 Don't miss it!";
           } else {
             topMessageEl.textContent = "";
             countdownEl.textContent = "";

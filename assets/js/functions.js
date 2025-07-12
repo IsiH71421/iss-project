@@ -30,6 +30,7 @@ function formatTime(secondsTotal) {
   return parts.slice(0, -1).join(", ") + ", and " + parts[parts.length - 1];
 }
 
+// for the forecast where seconds should not be displayed
 function formatTimeNoSeconds(secondsTotal) {
   const days = Math.floor(secondsTotal / (3600 * 24));
   const hours = Math.floor((secondsTotal % (3600 * 24)) / 3600);
@@ -72,13 +73,29 @@ function formatTimeBlocks(secondsTotal) {
   const mins = Math.floor((secondsTotal % 3600) / 60);
   const secs = secondsTotal % 60;
 
-  let blocks = [];
-  if (days > 0) blocks.push(createTimeBlock(days, days === 1 ? "day" : "days"));
-  if (hours > 0)
-    blocks.push(createTimeBlock(hours, hours === 1 ? "hour" : "hours"));
-  if (mins > 0)
-    blocks.push(createTimeBlock(mins, mins === 1 ? "minute" : "minutes"));
-  blocks.push(createTimeBlock(secs, secs === 1 ? "second" : "seconds"));
+  // Array mit allen Einheiten in Reihenfolge (höchste zu niedrigste)
+  const units = [
+    { value: days, label: "day" },
+    { value: hours, label: "hour" },
+    { value: mins, label: "minute" },
+    { value: secs, label: "second" },
+  ];
+
+  // Index des höchsten Elements, das > 0 ist finden
+  const firstNonZeroIndex = units.findIndex((unit) => unit.value > 0);
+
+  // Falls alle 0 sind (z.B. 0 Sekunden), zeige nur seconds
+  if (firstNonZeroIndex === -1) {
+    return createTimeBlock(0, "seconds");
+  }
+
+  // Ab dem höchsten nicht-null Element alle Einheiten einschließen (auch wenn 0)
+  const blocks = units.slice(firstNonZeroIndex).map((unit) => {
+    return createTimeBlock(
+      unit.value,
+      unit.value === 1 ? unit.label : unit.label + "s"
+    );
+  });
 
   return blocks.join("");
 }
