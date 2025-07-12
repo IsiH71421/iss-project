@@ -98,7 +98,7 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
   gap: 0.6rem;
   /* Slightly smaller gap */
   padding: var(--spacing-xs);
@@ -114,6 +114,7 @@ h1 {
   /* Reduced max width */
   min-height: 90px;
   /* Reduced height */
+  height: auto;
   background: var(--color-background-overlay-strong);
   border: 2px solid var(--color-white);
   border-radius: var(--border-radius-lg);
