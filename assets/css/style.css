@@ -8,7 +8,6 @@
   --color-primary: #0047b3;
   --color-white: #fff;
   --color-yellow: #ffd700;
-  --color-green: #00ff00;
   --color-text-primary: #fff;
   --color-background-primary: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
   --color-background-overlay: rgba(255, 255, 255, 0.1);
@@ -244,10 +243,11 @@ h1 {
 }
 
 /* Countdown message text when pass has ended */
-#final-message {
+#final-message,
+#top-message {
   font-size: 1.5rem;
   margin-top: var(--spacing-md);
-  color: var(--color-green);
+  color: var(--color-yellow);
   font-weight: bold;
 }
 

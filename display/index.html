@@ -15,6 +15,7 @@
       <h1>Next ISS Pass over Garching</h1>
 
       <div id="countdown-container">
+        <div id="top-message"></div>
         <div id="countdown">Loading countdown...</div>
         <div id="final-message"></div>
       </div>
@@ -68,6 +69,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     const paramsStr = urlParams.get('params');
 
+    const topMessageEl = document.getElementById('top-message');
     const countdownEl = document.getElementById('countdown');
     const finalMessageEl = document.getElementById('final-message');
 
@@ -85,6 +87,7 @@
     }
 
     function noValidPrediction() {
+      topMessageEl.textContent = "";
       countdownEl.textContent = "No prediction data available";
       finalMessageEl.textContent = "";
     }
@@ -104,28 +107,31 @@
 
           if (now < startTimestamp) {
             const diff = Math.floor((startTimestamp - now) / 1000);
+            topMessageEl.textContent = "";
             countdownEl.innerHTML = `Next pass in
                         <div class="countdown-blocks">
                             ${formatTimeBlocks(diff)}
                         </div>
                         The ISS will be visible for ${formatTime(durationSeconds)}.`;
-
+            finalMessageEl.textContent = "";
             if (diff <= 60) {
+              topMessageEl.textContent = "The ISS will be here in a few seconds!";
+              countdownEl.innerHTML = `<div class="countdown-blocks">
+                            ${formatTimeBlocks(diff)}
+                        </div>`;
               countdownEl.classList.add("alert");
-              finalMessageEl.textContent = "🚀 ISS is coming NOW!";
-            } else {
-              countdownEl.classList.remove("alert");
-              finalMessageEl.textContent = "";
+              finalMessageEl.textContent = "🚀 Get ready!!!";
             }
           } else if (now >= startTimestamp && now < endTimestamp) {
             const remaining = Math.floor((endTimestamp - now) / 1000);
-            countdownEl.innerHTML = `👀 ISS is visible! Time left:
-                        <div class="countdown-blocks">
+            topMessageEl.textContent = "👀 The ISS is visible now! Remaining time:";
+            countdownEl.innerHTML = `<div class="countdown-blocks">
                             ${formatTimeBlocks(remaining)}
                         </div>`;
             countdownEl.classList.add("alert");
             finalMessageEl.textContent = "Don't miss it!";
           } else {
+            topMessageEl.textContent = "";
             countdownEl.textContent = "";
             countdownEl.classList.remove("alert");
             finalMessageEl.textContent = "The ISS is gone. Did you take some nice pictures?";
