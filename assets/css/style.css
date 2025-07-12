@@ -34,7 +34,6 @@
   --font-size-md: 1.2rem;
   --font-size-lg: 1.4rem;
   --font-size-xl: 2rem;
-  --font-size-xxl: 2.8rem;
 
   /* QR code container height - adjust this value if needed */
   --qr-container-height: 30%;
@@ -79,7 +78,7 @@ body {
 
 /* Main headings: large font, text shadow for readability */
 h1 {
-  font-size: var(--font-size-xxl);
+  font-size: var(--font-size-xl);
   text-shadow: 0 0 8px var(--color-text-shadow);
   margin: var(--spacing-xs) 0;
   /* Reduced margin above and below headings */
