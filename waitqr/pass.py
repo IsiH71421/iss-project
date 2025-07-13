@@ -1,7 +1,8 @@
 from skyfield.api import Topos, load, EarthSatellite, wgs84
 from datetime import timedelta
-from zoneinfo import ZoneInfo  # für Zeitzonenumwandlung
+from zoneinfo import ZoneInfo
 import requests
+import numpy as np
 
 # Standort Garching
 latitude = 48.262839
@@ -30,12 +31,12 @@ eph = load('de421.bsp')
 earth = eph['earth']
 sun = eph['sun']
 
-# Zeitraum: Jetzt bis 2 Tage in die Zukunft
+# Zeitraum: Jetzt bis 7 Tage in die Zukunft
 now = ts.now()
 t0 = now
-t1 = ts.utc(now.utc_datetime() + timedelta(days=2))
+t1 = ts.utc(now.utc_datetime() + timedelta(days=7))
 
-# Zeitzone Europa/Berlin (automatisch CEST oder MEZ)
+# Zeitzone Europa/Berlin
 berlin_tz = ZoneInfo("Europe/Berlin")
 
 # Finde Überflüge (Events: Aufgang, Maximum, Untergang)
@@ -45,48 +46,52 @@ for i in range(0, len(events), 3):
     if i + 2 >= len(events):
         break  # unvollständiger Pass, abbrechen
 
-    rise_time = times[i].utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
-    max_time = times[i + 1].utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
-    set_time = times[i + 2].utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
+    rise_time = times[i]
+    max_time = times[i + 1]
+    set_time = times[i + 2]
 
-    # Maximale Elevation über Beobachter
-    alt, az, _ = (satellite - observer).at(times[i + 1]).altaz()
+    # Maximale Elevation
+    alt, az, _ = (satellite - observer).at(max_time).altaz()
     max_elev = alt.degrees
 
-    # Position der ISS zur max Zeit
-    iss_position = satellite.at(times[i + 1])
+    # Zeitpunkte im Überflugfenster alle 30 Sekunden
+    duration_seconds = int((set_time.utc_datetime() - rise_time.utc_datetime()).total_seconds())
+    steps = max(1, duration_seconds // 10)
+    sample_times = ts.utc([
+        (rise_time.utc_datetime() + timedelta(seconds=sec)) for sec in np.linspace(0, duration_seconds, steps)
+    ])
 
-    # Koordinaten der ISS (lat, lon, Höhe)
-    subpoint = wgs84.subpoint(iss_position)
-    lat = subpoint.latitude.degrees
-    lon = subpoint.longitude.degrees
-    elevation = subpoint.elevation.m
+    visible = False
+    for t in sample_times:
+        # ISS Position und Sonnenhöhe an diesem Zeitpunkt
+        iss_position = satellite.at(t)
+        subpoint = wgs84.subpoint(iss_position)
+        iss_observer = wgs84.latlon(latitude_degrees=subpoint.latitude.degrees,
+                                    longitude_degrees=subpoint.longitude.degrees,
+                                    elevation_m=subpoint.elevation.m)
+        iss_location = earth + iss_observer
+        sun_alt_at_iss = iss_location.at(t).observe(sun).apparent().altaz()[0].degrees
+        iss_lit = sun_alt_at_iss > -20.0
 
-    # Beobachter-Objekt an ISS-Position
-    iss_observer = wgs84.latlon(latitude_degrees=lat,
-                                longitude_degrees=lon,
-                                elevation_m=elevation)
+        # Sonnenhöhe am Boden
+        obs_pos = earth + observer
+        sun_alt = obs_pos.at(t).observe(sun).apparent().altaz()[0].degrees
+        observer_in_darkness = sun_alt < -4.0
 
-    # Sonnenhöhe aus Sicht der ISS
-    iss_location = earth + iss_observer
-    sun_alt_at_iss = iss_location.at(times[i + 1]).observe(sun).apparent().altaz()[0].degrees
-    iss_lit = sun_alt_at_iss > 0.0  # ISS wird von Sonne beleuchtet
+        if iss_lit and observer_in_darkness:
+            visible = True
+            break
 
-    # Sonnenhöhe aus Sicht des Bodenbeobachters
-    obs_pos = earth + observer
-    sun_apparent = obs_pos.at(times[i + 1]).observe(sun).apparent()
-    sun_alt = sun_apparent.altaz()[0].degrees
-    observer_in_darkness = sun_alt < 0.0  # Sonnenuntergang
-
-    # Sichtbarkeit des Überflugs: ISS beleuchtet & Boden dunkel
-    visible = iss_lit and observer_in_darkness
+    # Ausgabezeiten in CEST
+    rise_local = rise_time.utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
+    max_local = max_time.utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
+    set_local = set_time.utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
 
     # Ausgabe
     print("🛰 ISS-Überflug:")
-    print(f"   Beginn     : {rise_time.strftime('%Y-%m-%d %H:%M:%S %Z')}")
-    print(f"   Maximum    : {max_time.strftime('%Y-%m-%d %H:%M:%S %Z')} ({max_elev:.1f}°)")
-    print(f"   Ende       : {set_time.strftime('%Y-%m-%d %H:%M:%S %Z')}")
-    duration = int((times[i + 2].utc_datetime() - times[i].utc_datetime()).total_seconds())
-    print(f"   Dauer      : {duration // 60} min {duration % 60} sec")
+    print(f"   Beginn     : {rise_local.strftime('%Y-%m-%d %H:%M:%S %Z')}")
+    print(f"   Maximum    : {max_local.strftime('%Y-%m-%d %H:%M:%S %Z')} ({max_elev:.1f}°)")
+    print(f"   Ende       : {set_local.strftime('%Y-%m-%d %H:%M:%S %Z')}")
+    print(f"   Dauer      : {duration_seconds // 60} min {duration_seconds % 60} sec")
     print(f"   Sichtbar   : {'✅ Ja' if visible else '❌ Nein'}")
     print("-" * 50)
