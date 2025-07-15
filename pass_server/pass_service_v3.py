@@ -2,7 +2,10 @@
 from flask import Flask, jsonify, request
 from skyfield.api import Topos, load, EarthSatellite, wgs84
 from datetime import datetime, timedelta
-from zoneinfo import ZoneInfo
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports.zoneinfo import ZoneInfo
 import requests
 import numpy as np
 import threading
