@@ -45,7 +45,7 @@ satellite = load_satellite()
 
 # --- Cache-Funktionen ---
 def cache_is_expired():
-    """Prüft, ob die Cache-Datei älter als 60 Minuten ist oder nicht existiert."""
+    # Prüft, ob die Cache-Datei älter als 60 Minuten ist oder nicht existiert.
     if not os.path.exists(CACHE_FILE):
         return True
     mtime = os.path.getmtime(CACHE_FILE)
@@ -118,9 +118,9 @@ def find_passes(days=7):
         passes.append({
             "start": rise_local.strftime('%Y-%m-%d %H:%M:%S %Z'),
             "start_timestamp": int(rise_local.timestamp()),
-            "max": max_local.strftime('%Y-%m-%d %H:%M:%S %Z'),
             "end": set_local.strftime('%Y-%m-%d %H:%M:%S %Z'),
             "end_timestamp": int(set_local.timestamp()),
+            "max": max_local.strftime('%Y-%m-%d %H:%M:%S %Z'),
             "max_elevation_deg": round(max_elev, 1),
             "duration_sec": duration_seconds,
             "visible": visible
@@ -140,8 +140,7 @@ def passes_endpoint():
         days = int(days_str)
         if days < 1 or days > 7:
             return jsonify({"error": "days must be between 1 and 7"}), 400
-        #return jsonify(passes)
-        return jsonify(passes[:30])  # Optional: gibt maximal 30 Pässe zurüc
+        return jsonify(passes[:20])  # gibt maximal 20 Pässe zurück
     except ValueError:
         return jsonify({"error": "Invalid days parameter"}), 400
 
@@ -151,10 +150,58 @@ def next_pass_endpoint():
         threading.Thread(target=update_passes_cache).start()
 
     passes = load_passes_from_cache()
-    if passes:
-        return jsonify(passes[0])
-    else:
+    if not passes:
         return jsonify({"error": "No passes found"}), 404
+
+    next_pass = passes[0]
+
+    # Zusätzliche Details berechnen:
+    # Zeitpunkt der maximalen Höhe (mit Timestamp + halbe Dauer)
+    max_time_dt = datetime.fromtimestamp(next_pass['start_timestamp'] + (next_pass['duration_sec'] // 2), tz=ZoneInfo("UTC"))
+    max_time = ts.utc(max_time_dt)
+
+    # Azimut bei Aufgang und Untergang
+    rise_time = ts.utc(datetime.fromtimestamp(next_pass['start_timestamp'], tz=ZoneInfo("UTC")))
+    set_time = ts.utc(datetime.fromtimestamp(next_pass['end_timestamp'], tz=ZoneInfo("UTC")))
+
+    alt_rise, az_rise, _ = (satellite - observer).at(rise_time).altaz()
+    alt_set, az_set, _ = (satellite - observer).at(set_time).altaz()
+
+    # Richtungstext berechnen
+    def azimuth_to_direction(deg):
+        directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"]
+        idx = int((deg + 22.5) // 45)
+        return directions[idx]
+
+    direction_text = f"{azimuth_to_direction(az_rise.degrees)} → {azimuth_to_direction(az_set.degrees)}"
+
+    # Entfernung bei maximaler Höhe
+    iss_at_max = satellite.at(max_time)
+    distance_km = round(iss_at_max.distance().km, 1)
+
+    # Helligkeitsschätzung basierend auf dem Elevantionswinkel max_elevation_deg
+    # Je höher die ISS steht, deste näher ist sie und desto heller erscheint sie
+    max_elev = next_pass['max_elevation_deg']
+    if max_elev >= 60:
+        brightness = "very bright"
+    elif max_elev >= 40:
+        brightness = "bright"
+    elif max_elev >= 20:
+        brightness = "moderate"
+    else:
+        brightness = "faint"
+
+    # Zusatzinfos zum Ergebnis hinzufügen
+    next_pass.update({
+        "azimuth_start_deg": round(az_rise.degrees, 1),
+        "azimuth_end_deg": round(az_set.degrees, 1),
+        "direction": direction_text,
+        "distance_km": distance_km,
+        "brightness_estimate": brightness
+    })
+
+    return jsonify(next_pass)
+
 
 # --- Server starten, von außen erreichbar auf Port 52139 ---
 if __name__ == "__main__":

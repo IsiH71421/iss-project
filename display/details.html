@@ -37,23 +37,17 @@
 
     function showDetails(data) {
       const container = document.getElementById('details');
-
-      // Check if start and visibility start are the same
-      const startLabel = data.startVisibility && Math.abs(data.startUTC - data.startVisibility) > 5
-        ? "Start:"
-        : "Overflight and Visibility Start:";
-
-      const visibilityLine = data.startVisibility && Math.abs(data.startUTC - data.startVisibility) > 5
-        ? `<div class="detail-item"><strong>Visibility Start:</strong> ${formatTimestamp(data.startVisibility)}</div>`
-        : '';
+      const visibilityNote = data.visible ? "Yes" : "No";
 
       container.innerHTML = `
-    <div class="detail-item"><strong>${startLabel}</strong> ${formatTimestamp(data.startUTC)} (${data.startAzCompass}, ${data.startEl}°)</div>
-    <div class="detail-item"><strong>Maximum:</strong> ${formatTimestamp(data.maxUTC)} (${data.maxAzCompass}, ${data.maxEl}°)</div>
-    <div class="detail-item"><strong>End:</strong> ${formatTimestamp(data.endUTC)} (${data.endAzCompass}, ${data.endEl}°)</div>
-    <div class="detail-item"><strong>Magnitude:</strong> ${data.mag}</div>
-    <div class="detail-item"><strong>Duration:</strong> ${formatTime(data.duration)}</div>
-    ${visibilityLine}
+       <div class="detail-item"><strong>Start:</strong> ${formatTimestamp(data.start_timestamp)} (${data.azimuth_start_deg}°, ${data.direction.split("→")[0].trim()})</div>
+       <div class="detail-item"><strong>End:</strong> ${formatTimestamp(data.end_timestamp)} (${data.azimuth_end_deg}°, ${data.direction.split("→")[1].trim()})</div>
+       <div class="detail-item"><strong>Duration:</strong> ${formatTime(data.duration_sec)}</div>
+       <div class="detail-item"><strong>Visible:</strong> ${visibilityNote}</div>
+       <div class="detail-item"><strong>Maximum Elevation:</strong> ${data.max_elevation_deg}°</div>
+       <div class="detail-item"><strong>Direction:</strong> ${data.direction}</div>
+       <div class="detail-item"><strong>Brightness Estimate:</strong> ${data.brightness_estimate}</div>
+       <div class="detail-item"><strong>Flight Distance during Pass:</strong> ${data.distance_km.toFixed(1)} km</div>
   `;
     }
 
