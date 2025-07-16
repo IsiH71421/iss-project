@@ -1,26 +1,35 @@
+#!/usr/bin/python3
 from flask import Flask, jsonify, request
 from skyfield.api import Topos, load, EarthSatellite, wgs84
-from datetime import timedelta
-from zoneinfo import ZoneInfo
+from datetime import datetime, timedelta
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports.zoneinfo import ZoneInfo
 import requests
 import numpy as np
+import threading
+import os
+import json
 
 app = Flask(__name__)
 
-# --- Konstanten und Initialisierung ---
+# --- Konstanten ---
 latitude = 48.262839
 longitude = 11.666853
 elevation_m = 0
 berlin_tz = ZoneInfo("Europe/Berlin")
+CACHE_FILE = 'passes_cache.json'
+CACHE_MAX_AGE_MINUTES = 60
 
 # Skyfield Setup
 ts = load.timescale()
 eph = load('de421.bsp')
 earth = eph['earth']
 sun = eph['sun']
-
 observer = Topos(latitude_degrees=latitude, longitude_degrees=longitude, elevation_m=elevation_m)
 
+# --- Satellit laden ---
 def load_satellite():
     TLE_URL = "https://celestrak.org/NORAD/elements/stations.txt"
     tle_text = requests.get(TLE_URL).text.splitlines()
@@ -34,7 +43,30 @@ def load_satellite():
 
 satellite = load_satellite()
 
+# --- Cache-Funktionen ---
+def cache_is_expired():
+    """Prüft, ob die Cache-Datei älter als 60 Minuten ist oder nicht existiert."""
+    if not os.path.exists(CACHE_FILE):
+        return True
+    mtime = os.path.getmtime(CACHE_FILE)
+    age = datetime.now().timestamp() - mtime
+    return age > (CACHE_MAX_AGE_MINUTES * 60)
 
+def save_passes_to_cache(passes):
+    with open(CACHE_FILE, 'w') as f:
+        json.dump(passes, f)
+
+def load_passes_from_cache():
+    if not os.path.exists(CACHE_FILE):
+        return []
+    with open(CACHE_FILE, 'r') as f:
+        return json.load(f)
+
+def update_passes_cache():
+    passes = find_passes(days=7)
+    save_passes_to_cache(passes)
+
+# --- Passberechnung ---
 def find_passes(days=7):
     now = ts.now()
     t0 = now
@@ -79,43 +111,51 @@ def find_passes(days=7):
                 visible = True
                 break
 
-            rise_local = rise_time.utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
-            max_local = max_time.utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
-            set_local = set_time.utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
+        rise_local = rise_time.utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
+        max_local = max_time.utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
+        set_local = set_time.utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
 
-            passes.append({
-                "start": rise_local.strftime('%Y-%m-%d %H:%M:%S %Z'),
-                "max": max_local.strftime('%Y-%m-%d %H:%M:%S %Z'),
-                "end": set_local.strftime('%Y-%m-%d %H:%M:%S %Z'),
-                "max_elevation_deg": round(max_elev, 1),
-                "duration_sec": duration_seconds,
-                "visible": visible
-            })
+        passes.append({
+            "start": rise_local.strftime('%Y-%m-%d %H:%M:%S %Z'),
+            "start_timestamp": int(rise_local.timestamp()),
+            "max": max_local.strftime('%Y-%m-%d %H:%M:%S %Z'),
+            "end": set_local.strftime('%Y-%m-%d %H:%M:%S %Z'),
+            "end_timestamp": int(set_local.timestamp()),
+            "max_elevation_deg": round(max_elev, 1),
+            "duration_sec": duration_seconds,
+            "visible": visible
+         })
 
     return passes
 
+# --- Endpunkte ---
 @app.route('/passes')
 def passes_endpoint():
+    if cache_is_expired():
+        threading.Thread(target=update_passes_cache).start()
+
+    passes = load_passes_from_cache()
     days_str = request.args.get('days', '7')
     try:
         days = int(days_str)
         if days < 1 or days > 7:
             return jsonify({"error": "days must be between 1 and 7"}), 400
+        #return jsonify(passes)
+        return jsonify(passes[:30])  # Optional: gibt maximal 30 Pässe zurüc
     except ValueError:
         return jsonify({"error": "Invalid days parameter"}), 400
 
-    passes = find_passes(days=days)
-    return jsonify(passes)
-
 @app.route('/next_pass')
 def next_pass_endpoint():
-    passes = find_passes(days=7)
+    if cache_is_expired():
+        threading.Thread(target=update_passes_cache).start()
+
+    passes = load_passes_from_cache()
     if passes:
         return jsonify(passes[0])
     else:
         return jsonify({"error": "No passes found"}), 404
 
-
+# --- Server starten, von außen erreichbar auf Port 52139 ---
 if __name__ == "__main__":
-    # Server starten, von außen erreichbar auf Port 5000
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='::1', port=52139)

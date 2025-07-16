@@ -75,12 +75,14 @@
 
     let startTimestamp = null;
     let endTimestamp = null;
+    let visibility = false;
 
     if (paramsStr) {
       try {
         const params = JSON.parse(paramsStr);
-        startTimestamp = params.start ? parseInt(params.start) * 1000 : null;
-        endTimestamp = params.end ? parseInt(params.end) * 1000 : null;
+        startTimestamp = params.start_timestamp ? parseInt(params.start_timestamp) * 1000 : null;
+        endTimestamp = params.end_timestamp ? parseInt(params.end_timestamp) * 1000 : null;
+        visibility = params.visible ? params.visible : false;
       } catch (e) {
         console.warn('Invalid JSON parameter "params"');
       }
@@ -113,7 +115,8 @@
                         <div class="countdown-blocks">
                             ${formatTimeBlocks(diff)}
                         </div>
-                        The ISS will be visible for ${formatTime(durationSeconds)}.`;
+                        The pass duration is ${formatTime(durationSeconds)}.
+                        The pass will ${visibility ? 'be visible' : 'not be visible'}.`;
               finalMessageEl.textContent = "";
             }
             else {
@@ -126,17 +129,35 @@
             }
           } else if (now >= startTimestamp && now < endTimestamp) {
             const remaining = Math.floor((endTimestamp - now) / 1000);
-            topMessageEl.textContent = "The ISS is visible now! Remaining time:";
+            topMessageEl.textContent = "The ISS is here now! Remaining time:";
             countdownEl.innerHTML = `<div class="countdown-blocks">
                             ${formatTimeBlocks(remaining)}
                         </div>`;
             countdownEl.classList.add("alert");
-            finalMessageEl.textContent = "👀 Don't miss it!";
+            finalMessageEl.textContent = visibility
+              ? "👀 The ISS is visible today! Don't miss it!"
+              : "👀 The ISS is not visible today. But maybe you can still feel how close it is in your heart.";
           } else {
             topMessageEl.textContent = "";
             countdownEl.textContent = "";
             countdownEl.classList.remove("alert");
-            finalMessageEl.textContent = "The ISS is gone. Did you take some nice pictures?";
+            const messages = [
+              "The ISS is gone. Do not worry — it will be back soon. 🚀",
+              "The ISS is gone. Time to reboot your telescope! 🔄🛰️",
+              "The station is gone for now. Look up again later! 🔭",
+              "The station is gone, but maybe you can spot some aliens. 👽👀",
+              "The show is over for now. But there will be a sequel. 🎬",
+              "The ISS is gone. Time to appreciate the silence of space. 🖤",
+              "The station is gone. Time to enjoy some earthly views. 🌳",
+              "The station has vanished for now. Perfect time for a stargazing break. 🌟",
+              "The ISS is gone. Perfect moment to dream about the cosmos. 🌠💭",
+              "No ISS right now — but you can go outside and wave anyway. 👋",
+              "The ISS is gone so no point in waving to it now - but maybe you can wave to someone nearby. 👋🙂",
+              "The station has passed, but good company is always in orbit down here. 👥🌎",
+              "The ISS is out of range — but someone nearby might still enjoy a nerdy space fact. 🤓🌌"
+            ];
+            const randomIndex = Math.floor(Math.random() * messages.length);
+            finalMessageEl.textContent = messages[randomIndex];
           }
         }
 
