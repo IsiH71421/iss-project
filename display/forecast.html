@@ -26,21 +26,20 @@
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    const timestampsParam = params.get('timestamps');
+    const passesParam = params.get('passes');
 
     let passes = [];
 
-    if (timestampsParam) {
+    if (passesParam) {
       try {
-        const timestamps = JSON.parse(timestampsParam);
-        for (let i = 0; i < timestamps.length; i += 2) {
-          passes.push({
-            start: parseInt(timestamps[i], 10),
-            end: parseInt(timestamps[i + 1], 10)
-          });
-        }
+        const parsed = JSON.parse(passesParam);
+        passes = parsed.map(p => ({
+          start: parseInt(p.starttimestamp, 10),
+          end: parseInt(p.endtimestamp, 10),
+          visible: p.visible
+        }));
       } catch (e) {
-        console.error("Invalid timestamps parameter:", e);
+        console.error("Invalid passes parameter:", e);
       }
     }
 
@@ -60,10 +59,15 @@
 
         div.innerHTML = `
         <h2>Pass ${index + 1}</h2>
-          <div>Start: ${startDate.toLocaleString('en-US')}</div>
-          <div>End: ${endDate.toLocaleString('en-US')}</div>
-          <div class="countdown">Loading countdown...</div>
-        `;
+        <div>Start: ${startDate.toLocaleString('en-US')}</div>
+        <div>End: ${endDate.toLocaleString('en-US')}</div>
+        <div>Visibility👀:
+          <span title="${p.visible ? 'Yes' : 'No'}">
+            ${p.visible ? 'Yes ✅' : 'No ❌'}
+            </span>
+            </div>
+        <div class="countdown">Loading countdown...</div>
+      `;
 
         container.appendChild(div);
       });
@@ -78,12 +82,12 @@
         let text;
         if (now < start) {
           const diff = Math.floor((start - now) / 1000);
-          text = `Time left: ${formatTimeNoSeconds(diff)}.<br>Visibility Duration: ${formatTime(Math.floor((end - start) / 1000))}.`;
+          text = `Time left: ${formatTimeNoSeconds(diff)}.<br>Pass Duration: ${formatTime(Math.floor((end - start) / 1000))}.`;
         } else if (now >= start && now <= end) {
           const diff = Math.floor((end - now) / 1000);
           text = `Pass in progress, ends in ${formatTimeNoSeconds(diff)}.`;
         } else {
-          text = 'Pass finished. Did you take cool pictures?';
+          text = 'Pass finished.';
         }
         div.querySelector('.countdown').innerHTML = text;
       });
