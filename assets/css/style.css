@@ -4,44 +4,70 @@
    CSS CUSTOM PROPERTIES (VARIABLES)
    ========================================================================== */
 :root {
-  /* Colors */
+  /* Color scheme inspired by space/astronomy themes */
   --color-primary: #0047b3;
+  /* Deep blue for primary elements */
   --color-white: #fff;
   --color-yellow: #ffd700;
+  /* Gold yellow for highlights and alerts */
   --color-text-primary: #fff;
+  /* White text for dark backgrounds */
+
+  /* Background gradients and overlays */
   --color-background-primary: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+  /* Space-themed gradient */
   --color-background-overlay: rgba(255, 255, 255, 0.1);
+  /* Subtle white overlay */
   --color-background-overlay-strong: rgba(255, 255, 255, 0.15);
+  /* More prominent overlay */
   --color-background-card: #fefefe;
+  /* Nearly white for content cards */
+
+  /* Borders and shadows */
   --color-border: #ccc;
   --color-shadow: rgba(0, 0, 0, 0.05);
+  /* Subtle shadows for depth */
   --color-text-shadow: rgba(0, 0, 0, 0.5);
+  /* Dark shadow for text readability */
 
-  /* Spacing */
+  /* Consistent spacing scale using rem units for accessibility */
   --spacing-xs: 0.2rem;
+  /* 3.2px at default font size */
   --spacing-sm: 0.5rem;
+  /* 8px */
   --spacing-md: 1rem;
+  /* 16px - base unit */
   --spacing-lg: 2rem;
+  /* 32px */
   --spacing-xl: 3rem;
+  /* 48px */
 
-  /* Border radius */
+  /* Border radius values for consistent rounded corners */
   --border-radius-sm: 6px;
   --border-radius-md: 8px;
   --border-radius-lg: 12px;
 
-  /* Font sizes */
+  /* Typography scale */
   --font-size-sm: 1rem;
   --font-size-md: 1.2rem;
   --font-size-lg: 1.4rem;
   --font-size-xl: 2rem;
+  --font-size-xxl: 3rem;
+  /* Large size used for countdown numbers */
 
-  /* QR code container height - adjust this value if needed */
+  /* Font family used throughout the application */
+  --font-family-primary: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Layout proportions - adjust these to change overall page balance */
   --qr-container-height: 30%;
+  /* Bottom section with QR codes */
   --content-height: 70%;
+  /* Main content area */
 }
 
 /* ==========================================================================
-   BASE STYLES - Used across all pages
+   BASE STYLES
+   Foundation styles applied to all pages for consistent behavior
    ========================================================================== */
 
 html,
@@ -50,6 +76,7 @@ body {
   padding: 0;
   height: 100vh;
   overflow: hidden;
+  /* Prevent scrolling on main layout */
   font-family: var(--font-family-primary);
   background: var(--color-background-primary);
   color: var(--color-text-primary);
@@ -62,7 +89,7 @@ body {
   align-items: center;
 }
 
-/* Main container that divides page into content and QR codes */
+/* Main layout container - divides screen into content and navigation areas */
 .main-layout {
   display: flex;
   flex-direction: column;
@@ -70,179 +97,216 @@ body {
   width: 100vw;
   overflow: hidden;
   justify-content: space-between;
-  /* Distribute space between content and QR codes */
+  /* Push content and QR codes to opposite ends */
   align-items: stretch;
+  /* Full width for child elements */
   padding: var(--spacing-md);
   box-sizing: border-box;
 }
 
-/* Main headings: large font, text shadow for readability */
+/* Primary headings with enhanced visibility */
 h1 {
   font-size: var(--font-size-xl);
   text-shadow: 0 0 8px var(--color-text-shadow);
+  /* Glow effect for readability */
   margin: var(--spacing-xs) 0;
-  /* Reduced margin above and below headings */
+  /* Minimal vertical spacing */
 }
 
 /* ==========================================================================
-   COMPONENT STYLES - Shared components across pages
+   SHARED NAVIGATION COMPONENTS
+   QR code-based navigation system used across all pages
    ========================================================================== */
 
+/* Container for QR code navigation options */
 .qr-code-option-container {
   flex: 0 0 auto;
-  /* Auto size but don't grow */
+  /* Don't grow, maintain fixed proportions */
   min-height: 100px;
-  /* Reduced minimum height */
+  /* Ensure minimum usable height */
   max-height: 25vh;
-  /* Reduced maximum height */
+  /* Prevent overwhelming the content */
   display: flex;
   flex-wrap: wrap;
+  /* Allow wrapping on smaller screens */
   justify-content: center;
   align-items: stretch;
+  /* Equal height for all options */
   gap: 0.6rem;
-  /* Slightly smaller gap */
   padding: var(--spacing-xs);
-  /* Reduced padding */
   box-sizing: border-box;
   overflow: hidden;
+  /* Prevent scrolling within navigation */
 }
 
+/* Individual QR code option button */
 .qr-code-option {
   flex: 1 1 200px;
-  /* Slightly smaller base width */
+  /* Flexible width with 200px minimum */
   max-width: 250px;
-  /* Reduced max width */
+  /* Prevent buttons from becoming too wide */
   min-height: 90px;
-  /* Reduced height */
   height: auto;
   background: var(--color-background-overlay-strong);
   border: 2px solid var(--color-white);
   border-radius: var(--border-radius-lg);
   color: var(--color-white);
   font-size: 1rem;
-  /* Slightly smaller font */
   font-weight: 700;
   padding: 0.6em 0.8em;
-  /* Reduced padding */
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  /* Left-align content within button */
   gap: 0.8em;
   box-sizing: border-box;
   user-select: none;
+  /* Prevent text selection on touch devices */
 }
 
-/* Text content in QR options - allow wrapping */
+/* Text content within QR options - allows for multi-line descriptions */
 .qr-code-option .text-content {
   flex: 1;
-  /* Take available space */
+  /* Take remaining space between emoji and QR */
   white-space: normal;
-  /* Allow text wrapping */
+  /* Allow text wrapping for longer descriptions */
   word-wrap: break-word;
   line-height: 1.3;
 }
 
-/* QR code should stay fixed size and at the end */
+/* QR code positioning - always stays at the right edge */
 .qr-code-option .qr-code {
   flex-shrink: 0;
-  /* Don't shrink the QR code */
+  /* Never shrink the QR code */
   margin-left: auto;
-  /* Push QR code to the right */
+  /* Push to the far right */
 }
 
-/* Emoji inside QR options */
+/* Emoji icons in navigation options */
 .qr-code-option .emoji {
   font-size: 2.5rem;
-  /* Reduced from 3.2rem */
+  /* Large enough to be easily visible */
 }
 
-/* QR code images */
+/* QR code image styling */
 .qr-code {
   width: 60px;
-  /* Slightly smaller QR codes */
   height: 60px;
   border: 2px solid var(--color-white);
   background: var(--color-white);
+  /* White background ensures QR readability */
   padding: 4px;
-  /* Reduced padding */
   border-radius: var(--border-radius-md);
   box-sizing: border-box;
 }
 
 /* ==========================================================================
-   INDEX.HTML - Countdown page specific styles
+   MAIN CONTENT AREA
+   Shared layout for the primary content section across all pages
    ========================================================================== */
 
-/* Container for countdown and countdown-text on index page */
+.content {
+  flex: 1;
+  /* Take all remaining space after navigation */
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  align-items: center;
+  justify-content: flex-start;
+  /* Content starts at top, doesn't center vertically */
+  padding: var(--spacing-xs);
+  box-sizing: border-box;
+  min-height: 0;
+  /* Allow shrinking if needed */
+  overflow: hidden;
+  /* Prevent main content from causing page scroll */
+  text-align: center;
+}
+
+/* ==========================================================================
+   INDEX.HTML - Countdown Page
+   Specialized styles for the main countdown/timer display
+   ========================================================================== */
+
+/* Main countdown display container */
 #countdown-container {
   background: var(--color-background-overlay);
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-lg);
   max-width: 600px;
   width: 90vw;
+  /* Responsive width with maximum */
   margin: auto;
   color: var(--color-white);
   text-align: center;
   font-family: var(--font-family-primary);
 }
 
-/* Flex container for countdown time blocks on index page */
+/* Flexbox layout for countdown time blocks */
 .countdown-blocks {
   display: flex;
   justify-content: center;
   gap: var(--spacing-md);
   flex-wrap: wrap;
+  /* Stack on smaller screens */
   margin: var(--spacing-md) 0;
 }
 
-/* Countdown time blocks on index page */
+/* Individual time blocks (days, hours, minutes, seconds) */
 .time-block {
   border: 1px solid var(--color-border);
   padding: 15px;
   margin-bottom: 30px;
+  /* Space below each block */
   border-radius: var(--border-radius-sm);
   background-color: var(--color-background-card);
   box-shadow: 0 2px 8px var(--color-shadow);
   color: var(--color-primary);
 }
 
-/* Numerical countdown value */
+/* Large numerical countdown values */
 .time-value {
   color: var(--color-primary);
   font-size: var(--font-size-xxl);
+  /* Largest font for high visibility */
   font-weight: 700;
   line-height: 1;
+  /* Tight line height for compact display */
 }
 
-/* Countdown label */
+/* Labels for time units (days, hours, etc.) */
 .time-label {
   color: var(--color-primary);
   font-size: var(--font-size-sm);
   margin-top: var(--spacing-xs);
   text-transform: lowercase;
+  /* Consistent lowercase styling */
 }
 
-/* Countdown text on index page */
+/* Main countdown text display */
 #countdown {
   font-size: var(--font-size-xl);
   margin-top: var(--spacing-md);
 }
 
-/* Countdown alert during last countdown minute */
+/* Alert state for final countdown (last minute) */
 #countdown.alert {
   animation: blink 1s step-start infinite;
+  /* Blinking animation for urgency */
   color: var(--color-yellow);
+  /* Bright yellow for attention */
   font-weight: bold;
 }
 
-/* Blink animation for alert */
+/* Blinking animation keyframes */
 @keyframes blink {
   50% {
     opacity: 0;
+    /* 50% of time invisible for blink effect */
   }
 }
 
-/* Countdown message text when pass has ended */
+/* Messages displayed before and after ISS passes */
 #final-message,
 #top-message {
   font-size: 1.5rem;
@@ -252,67 +316,48 @@ h1 {
 }
 
 /* ==========================================================================
-   SHARED LAYOUT STYLES - Used across all pages
-   ========================================================================== */
-/* Content area takes remaining space - default vertical layout */
-.content {
-  flex: 1;
-  /* Take remaining space */
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  align-items: center;
-  justify-content: flex-start;
-  padding: var(--spacing-xs);
-  /* Reduced padding */
-  box-sizing: border-box;
-  min-height: 0;
-  overflow: hidden;
-  /* Prevent content overflow */
-  text-align: center;
-}
-
-/* ==========================================================================
-   PICTURE.HTML - NASA picture of the day page specific styles
+   PICTURE.HTML - NASA Picture of the Day
+   Layout for displaying large images with accompanying text
    ========================================================================== */
 
-/* Normal layout container for picture page */
+/* Main layout container for picture and text */
 #normal-layout {
   display: flex;
   flex-direction: row;
+  /* Side-by-side layout */
   align-items: stretch;
+  /* Equal height for image and text */
   gap: var(--spacing-md);
   width: fit-content;
-  /* Size container based on content */
+  /* Size based on content, not container */
   max-width: 95vw;
-  /* Prevent overflow */
+  /* Prevent horizontal overflow */
   margin: 0 auto;
-  /* Center the entire layout */
-  /* Remove height: 100% to let content determine the height */
+  /* Center the layout */
 }
 
-/* Picture styling */
+/* NASA image styling with responsive constraints */
 #picture {
   flex: 0 0 auto;
-  /* Size based on natural dimensions */
+  /* Don't grow/shrink, use natural size */
   max-width: 70vw;
-  /* Allow image to be large but leave space for text */
+  /* Leave space for text panel */
   max-height: 80vh;
+  /* Fit within viewport height */
   object-fit: contain;
+  /* Maintain aspect ratio */
   border-radius: var(--border-radius-lg);
-  /* Image shows at natural size within constraints */
 }
 
-/* Explanation text box */
+/* Text panel for image title and description */
 .explanation-box {
   flex: 0 0 auto;
-  /* Don't grow, size based on content */
+  /* Fixed size, don't grow */
   min-width: min(200px, 25vw);
-  /* Minimum width responsive to viewport */
+  /* Responsive minimum width */
   max-width: min(400px, 40vw);
-  /* Maximum width responsive to viewport */
+  /* Responsive maximum width */
   width: fit-content;
-  /* Size based on content width */
   background: var(--color-background-overlay);
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-md);
@@ -320,48 +365,48 @@ h1 {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  /* Content starts at top */
   overflow: hidden;
+  /* Contain text within box */
   text-align: left;
 }
 
-/* Title in the explanation box */
+/* Image title within explanation box */
 .explanation-box h2 {
   font-size: var(--font-size-lg);
   margin: 0 0 0.3rem;
 }
 
-/* Subtitle in the explanation box */
+/* Image subtitle/date within explanation box */
 .explanation-box h3 {
   font-size: var(--font-size-sm);
   font-weight: 400;
   opacity: 0.8;
-  margin-bottom: 0.8rem;
+  /* Subtle appearance for secondary info */
+  margin: var(--spacing-sm) 0 var(--spacing-md);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Handle long dates gracefully */
 }
 
-/* Explanation text: scrollable area within the box */
+/* Scrollable explanation text */
 .explanation-box p {
   flex: 1;
+  /* Take remaining space in box */
   overflow-y: auto;
+  /* Scroll if text is too long */
   white-space: normal;
   line-height: 1.4;
   margin: 0;
 }
 
-/* Subheadline styling with ellipsis for overflow */
-.explanation-box h3 {
-  font-size: var(--font-size-sm);
-  font-weight: 400;
-  opacity: 0.8;
-  margin: var(--spacing-sm) 0 var(--spacing-md);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 /* ==========================================================================
-   DETAILS.HTML - ISS pass details page specific styles
+   DETAILS.HTML - ISS Pass Details
+   Detailed information display for individual ISS passes
    ========================================================================== */
-/* Details container styling */
+
+/* Container for pass detail information */
 .details-container {
   background: var(--color-background-overlay);
   border-radius: var(--border-radius-lg);
@@ -369,63 +414,75 @@ h1 {
   max-width: 600px;
   margin: 0 auto;
   text-align: left;
+  /* Left-align for better readability */
 }
 
-/* Individual detail items */
+/* Individual detail line items */
 .detail-item {
   margin-bottom: var(--spacing-sm);
   line-height: 1.5;
 }
 
+/* Highlight labels in detail items */
 .detail-item strong {
   color: var(--color-yellow);
+  /* Make labels prominent */
 }
 
 /* ==========================================================================
-   CREW.HTML - ISS crew page specific styles
+   CREW.HTML - ISS Crew Information
+   Grid layout for displaying crew members organized by spacecraft
    ========================================================================== */
-/* Override content alignment for crew page */
+
+/* Override default content alignment for crew page */
 .content:has(#crew),
 .crew-page .content {
   align-items: stretch;
+  /* Full width layout */
   width: 100%;
 }
 
-/* Crew container - horizontal layout for spacecraft blocks */
+/* Main crew container - flexible grid for spacecraft blocks */
 #crew {
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-sm);
   width: 100%;
   max-width: none;
+  /* Allow full width usage */
   margin: 0;
   overflow: visible;
+  /* Allow content to extend if needed */
   justify-content: center;
   align-items: flex-start;
+  /* Top-align blocks of different heights */
 }
 
-/* Spacecraft block styling - compact and tall */
+/* Individual spacecraft crew block */
 .spacecraft-block {
   background: var(--color-background-overlay);
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-sm);
   border-left: 4px solid var(--color-yellow);
+  /* Accent border for visual hierarchy */
   display: flex;
   flex-direction: column;
   max-height: 75vh;
+  /* Limit height to prevent overwhelming */
   width: 280px;
   flex: 0 0 280px;
+  /* Fixed width, no growing */
   overflow: hidden;
 }
 
-/* Wider blocks when they contain two-column member lists */
+/* Wider blocks for spacecraft with many crew members */
 .spacecraft-block:has(.crew-members.two-columns),
 .spacecraft-block.has-two-columns {
   width: 350px;
   flex: 0 0 350px;
 }
 
-/* Spacecraft title */
+/* Spacecraft/mission title */
 .spacecraft-title {
   font-size: var(--font-size-md);
   color: var(--color-yellow);
@@ -435,39 +492,124 @@ h1 {
   font-weight: bold;
 }
 
-/* Crew members list - adaptive column layout */
+/* Grid layout for crew member cards */
 .crew-members {
   display: grid;
   grid-template-columns: 1fr;
+  /* Single column by default */
   gap: var(--spacing-xs);
   overflow-y: auto;
+  /* Scroll if too many crew members */
   flex: 1;
+  /* Take remaining space in block */
 }
 
-/* Two-column layout for blocks with many members */
+/* Two-column layout for blocks with many members (>4) */
 .crew-members.two-columns {
   grid-template-columns: 1fr 1fr;
   gap: var(--spacing-xs);
 }
 
-/* Individual crew member styling - compact */
+/* Individual crew member card */
 .crew-member {
   background: var(--color-background-overlay-strong);
   padding: var(--spacing-xs);
   border-radius: var(--border-radius-sm);
   text-align: center;
   font-size: 0.85rem;
+  /* Compact text for more information */
   line-height: 1.3;
 }
 
-/* Responsive adjustments for crew page */
+/* ==========================================================================
+   FORECAST.HTML - ISS Pass Forecast
+   Card-based layout for displaying multiple upcoming passes
+   ========================================================================== */
+
+/* Container for multiple pass cards */
+#passes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  width: 100%;
+  justify-content: center;
+  align-items: flex-start;
+  /* Top-align cards of different heights */
+  overflow-y: auto;
+  /* Scroll if many passes */
+  max-height: 100%;
+  padding: 0;
+}
+
+/* Individual pass information card */
+.pass {
+  background: var(--color-background-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: 0 4px 12px var(--color-shadow);
+  color: var(--color-primary);
+  width: 280px;
+  flex: 0 0 280px;
+  /* Fixed width cards */
+  box-sizing: border-box;
+  height: fit-content;
+  /* Height based on content */
+  min-height: 200px;
+  /* Ensure minimum usable height */
+  border-left: 4px solid var(--color-primary);
+  /* Accent border */
+}
+
+/* Pass number/title styling */
+.pass h2 {
+  font-size: var(--font-size-md);
+  margin: 0 0 var(--spacing-sm);
+  color: var(--color-primary);
+  font-weight: bold;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  /* Subtle separator */
+  padding-bottom: var(--spacing-xs);
+}
+
+/* Pass information text */
+.pass > div {
+  font-size: 0.95rem;
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.4;
+  text-align: left;
+}
+
+/* Dynamic countdown display within pass cards */
+.pass .countdown {
+  margin-top: var(--spacing-sm);
+  font-weight: bold;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  text-align: center;
+  background: var(--color-white);
+  border: 1px solid #eee;
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   Mobile and tablet adaptations for better usability across devices
+   ========================================================================== */
+
+/* Tablet and smaller desktop adjustments */
 @media (max-width: 1200px) {
   #crew {
     grid-template-columns: repeat(auto-fit, minmax(180px, 250px));
   }
 }
 
+/* Mobile landscape and smaller tablet adjustments */
 @media (max-width: 768px) {
+
+  /* Crew page adjustments */
   #crew {
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: var(--spacing-xs);
@@ -475,6 +617,7 @@ h1 {
 
   .spacecraft-block {
     max-height: 60vh;
+    /* Reduced height for smaller screens */
     padding: var(--spacing-xs);
   }
 
@@ -493,85 +636,12 @@ h1 {
     flex: 0 0 200px;
   }
 
-  /* Switch back to single column on very small screens */
+  /* Switch back to single column on smaller screens */
   .crew-members.two-columns {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 480px) {
-  #crew {
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-xs);
-  }
-}
-
-/* ==========================================================================
-   FORECAST.HTML - ISS pass forecast page specific styles
-   ========================================================================== */
-/* Passes container: flexible layout for pass cards */
-#passes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-sm);
-  width: 100%;
-  justify-content: center;
-  align-items: flex-start;
-  overflow-y: auto;
-  max-height: 100%;
-  padding: 0;
-}
-
-/* Individual pass card: white box with styling consistent with other pages */
-.pass {
-  background: var(--color-background-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-lg);
-  padding: var(--spacing-md);
-  box-shadow: 0 4px 12px var(--color-shadow);
-  color: var(--color-primary);
-  width: 280px;
-  flex: 0 0 280px;
-  box-sizing: border-box;
-  height: fit-content;
-  min-height: 200px;
-  border-left: 4px solid var(--color-primary);
-}
-
-/* Pass title styling */
-.pass h2 {
-  font-size: var(--font-size-md);
-  margin: 0 0 var(--spacing-sm);
-  color: var(--color-primary);
-  font-weight: bold;
-  text-align: center;
-  border-bottom: 1px solid #eee;
-  padding-bottom: var(--spacing-xs);
-}
-
-/* Pass content styling */
-.pass > div {
-  font-size: 0.95rem;
-  margin-bottom: var(--spacing-xs);
-  line-height: 1.4;
-  text-align: left;
-}
-
-/* Countdown text inside pass-container */
-.pass .countdown {
-  margin-top: var(--spacing-sm);
-  font-weight: bold;
-  color: var(--color-primary);
-  font-size: 0.9rem;
-  text-align: center;
-  background: var(--color-white);
-  border: 1px solid #eee;
-  padding: var(--spacing-xs);
-  border-radius: var(--border-radius-sm);
-}
-
-/* Responsive adjustments for forecast page */
-@media (max-width: 768px) {
+  /* Forecast page adjustments */
   .pass {
     width: 250px;
     flex: 0 0 250px;
@@ -588,7 +658,16 @@ h1 {
   }
 }
 
+/* Mobile portrait adjustments */
 @media (max-width: 480px) {
+
+  /* Crew page - two column layout for very small screens */
+  #crew {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xs);
+  }
+
+  /* Forecast page - single column stack */
   #passes {
     flex-direction: column;
     align-items: center;
@@ -596,7 +675,9 @@ h1 {
 
   .pass {
     width: 100%;
+    /* Full width on mobile */
     max-width: 300px;
+    /* But with reasonable maximum */
     flex: none;
   }
 }

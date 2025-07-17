@@ -3,18 +3,22 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>ISS Passes in the Next 7 Days</title>
+  <title>Next ISS Passes</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
+  <!-- Import shared time formatting functions -->
   <script src="../assets/js/functions.js"></script>
 </head>
 
 <body>
   <div class="main-layout">
     <div class="content">
-      <h1>ISS Passes in the Next 7 Days</h1>
+      <h1>Next ISS Passes</h1>
+
+      <!-- Container where pass information will be dynamically inserted -->
       <div id="passes"></div>
     </div>
 
+    <!-- Navigation section with QR code to return to main countdown page -->
     <div class="qr-code-option-container">
       <div class="qr-code-option">
         <span class="emoji">⬅</span>
@@ -25,75 +29,113 @@
   </div>
 
   <script>
+    // Extract passes data from URL query parameters
     const params = new URLSearchParams(window.location.search);
     const passesParam = params.get('passes');
 
     let passes = [];
 
+    // Parse and normalize pass data from URL parameters
     if (passesParam) {
       try {
         const parsed = JSON.parse(passesParam);
+
+        // Transform pass data into standardized format with Unix timestamps
+        // Convert string timestamps to integers for consistent processing
         passes = parsed.map(p => ({
-          start: parseInt(p.starttimestamp, 10),
-          end: parseInt(p.endtimestamp, 10),
-          visible: p.visible
+          start: parseInt(p.starttimestamp, 10),    // Start time as Unix timestamp
+          end: parseInt(p.endtimestamp, 10),        // End time as Unix timestamp
+          visible: p.visible                        // Visibility flag (boolean)
         }));
       } catch (e) {
+        // Handle malformed JSON data
         console.error("Invalid passes parameter:", e);
       }
     }
 
+    // Get container element for displaying pass information
     const container = document.getElementById('passes');
 
+    // Display passes or show "no passes" message
     if (passes.length === 0) {
       container.textContent = 'No passes found in the next 7 days.';
     } else {
+      // Create individual pass cards for each upcoming pass
       passes.forEach((p, index) => {
+        // Create container element for this pass
         const div = document.createElement('div');
         div.className = 'pass';
+
+        // Store timestamps as data attributes for countdown calculations
         div.dataset.start = p.start;
         div.dataset.end = p.end;
 
+        // Convert Unix timestamps to JavaScript Date objects
         const startDate = new Date(p.start * 1000);
         const endDate = new Date(p.end * 1000);
 
+        // Build HTML content for this pass card
         div.innerHTML = `
-        <h2>Pass ${index + 1}</h2>
-        <div>Start: ${startDate.toLocaleString('en-US')}</div>
-        <div>End: ${endDate.toLocaleString('en-US')}</div>
-        <div>Visibility👀:
-          <span title="${p.visible ? 'Yes' : 'No'}">
-            ${p.visible ? 'Yes ✅' : 'No ❌'}
-            </span>
-            </div>
-        <div class="countdown">Loading countdown...</div>
-      `;
+          <h2>Pass ${index + 1}</h2>
 
+          <!-- Start time in local format -->
+          <div>Start: ${startDate.toLocaleString('en-US')}</div>
+
+          <!-- End time in local format -->
+          <div>End: ${endDate.toLocaleString('en-US')}</div>
+
+          <!-- Visibility status with icons -->
+          <div>Visibility👀:
+            <span title="${p.visible ? 'Yes' : 'No'}">
+              ${p.visible ? 'Yes ✅' : 'No ❌'}
+            </span>
+          </div>
+
+          <!-- Dynamic countdown container (updated every second) -->
+          <div class="countdown">Loading countdown...</div>
+        `;
+
+        // Add this pass card to the container
         container.appendChild(div);
       });
     }
 
+    // Update countdown timers for all passes
+    // Shows different messages based on pass status (upcoming, in progress, finished)
     function updateCountdowns() {
-      const now = Date.now();
+      const now = Date.now(); // Current time in milliseconds
+
+      // Loop through all pass elements and update their countdown displays
       document.querySelectorAll('.pass').forEach(div => {
+        // Get start and end times from data attributes (convert to milliseconds)
         const start = parseInt(div.dataset.start) * 1000;
         const end = parseInt(div.dataset.end) * 1000;
 
         let text;
+
+        // Determine pass status and create appropriate message
         if (now < start) {
+          // Pass hasn't started yet - show countdown to start
           const diff = Math.floor((start - now) / 1000);
           text = `Time left: ${formatTimeNoSeconds(diff)}.<br>Pass Duration: ${formatTime(Math.floor((end - start) / 1000))}.`;
         } else if (now >= start && now <= end) {
+          // Pass is currently happening - show countdown to end
           const diff = Math.floor((end - now) / 1000);
           text = `Pass in progress, ends in ${formatTimeNoSeconds(diff)}.`;
         } else {
+          // Pass has already finished
           text = 'Pass finished.';
         }
+
+        // Update the countdown display for this pass
         div.querySelector('.countdown').innerHTML = text;
       });
     }
 
+    // Initialize countdown displays immediately
     updateCountdowns();
+
+    // Update countdowns every second to keep them current
     setInterval(updateCountdowns, 1000);
   </script>
 

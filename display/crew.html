@@ -11,10 +11,10 @@
   <div class="main-layout">
     <div class="content">
       <h1 id="main-title"></h1>
-
       <div id="crew"></div>
     </div>
 
+    <!-- Navigation section with QR code to return to main countdown page -->
     <div class="qr-code-option-container">
       <div class="qr-code-option">
         <span class="emoji">⬅</span>
@@ -25,6 +25,8 @@
   </div>
 
   <script>
+    // Extract expedition data from URL parameters
+    // Expects JSON data in 'params' query parameter
     function getExpeditionDataFromURL() {
       const params = new URLSearchParams(window.location.search);
       const dataParam = params.get('params');
@@ -32,6 +34,7 @@
       if (!dataParam) return null;
 
       try {
+        // Parse JSON data containing expedition and crew information
         return JSON.parse(dataParam);
       } catch (e) {
         console.error("Error parsing expedition params:", e);
@@ -39,6 +42,8 @@
       }
     }
 
+    // Convert Unix timestamp to human-readable date format
+    // Returns format: "17 July 2025"
     function formatDate(unixTimestamp) {
       const date = new Date(unixTimestamp * 1000);
       return date.toLocaleDateString('en-GB', {
@@ -48,6 +53,8 @@
       });
     }
 
+    // Display expedition information in the main title
+    // Shows expedition number and duration
     function renderExpeditionInfo(data) {
       const titleEl = document.getElementById('main-title');
       const expeditionNumber = data.expedition_number ?? 'Unknown';
@@ -57,6 +64,8 @@
       titleEl.textContent = `ISS Expedition ${expeditionNumber} - ${startDate} to ${endDate}`;
     }
 
+    // Render crew members organized by their spacecraft/mission
+    // Groups crew into categories based on spacecraft type
     function renderCrewList(crewArray) {
       const container = document.getElementById('crew');
 
@@ -84,7 +93,7 @@
         }
       };
 
-      // Group crew members by spacecraft
+      // Sort crew members into spacecraft categories
       crewArray.forEach(person => {
         const spacecraft = person.spacecraft;
         if (spacecraft.includes('Crew-10 Dragon')) {
@@ -96,34 +105,39 @@
         } else if (spacecraft.includes('Starliner')) {
           spacecraftCategories['Starliner'].members.push(person);
         } else {
-          // Default to Others if unknown
+          // Default category for unrecognized spacecraft
           spacecraftCategories['Others'].members.push(person);
         }
       });
 
-      // Create blocks for each category that has members
+      // Create visual blocks for each spacecraft category that has crew members
       Object.values(spacecraftCategories).forEach(category => {
         if (category.members.length > 0) {
+          // Create main container for this spacecraft category
           const block = document.createElement('div');
           block.className = 'spacecraft-block';
 
+          // Add category title (spacecraft name and description)
           const title = document.createElement('h2');
           title.innerHTML = category.title;
           title.className = 'spacecraft-title';
           block.appendChild(title);
 
+          // Container for crew member cards
           const membersList = document.createElement('div');
           membersList.className = 'crew-members';
 
-          // Use two columns if there are more than 4 members
+          // Use two-column layout for categories with many members (>4)
           if (category.members.length > 4) {
             membersList.classList.add('two-columns');
             block.classList.add('has-two-columns');
           }
 
+          // Create individual crew member cards
           category.members.forEach(person => {
             const memberDiv = document.createElement('div');
             memberDiv.className = 'crew-member';
+            // Display name, country, and position for each crew member
             memberDiv.innerHTML = `
               <strong>${person.name}</strong><br>
               <span>Country: ${person.country}</span><br>
@@ -138,9 +152,13 @@
       });
     }
 
+    // Main execution: Load and display expedition data
     const expeditionData = getExpeditionDataFromURL();
     if (expeditionData) {
+      // Display expedition header information
       renderExpeditionInfo(expeditionData);
+
+      // Display crew members if crew data is available and valid
       if (Array.isArray(expeditionData.crew)) {
         renderCrewList(expeditionData.crew);
       }

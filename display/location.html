@@ -4,16 +4,25 @@
 <head>
   <meta charset="UTF-8" />
   <title>ISS Live Map</title>
+  <!-- Leaflet CSS for interactive maps -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <!-- Custom styling for the ISS application -->
   <link rel="stylesheet" href="../assets/css/style.css" />
+  <!-- Leaflet JavaScript library for interactive maps -->
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
   <style>
+    /* Map container styling for full-screen display */
     #map {
       flex-grow: 1;
+      /* Take up remaining vertical space */
       width: 100%;
+      /* Full width of container */
       border-radius: 12px;
+      /* Rounded corners for modern look */
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      /* Subtle shadow for depth */
       margin: 0 auto;
+      /* Center horizontally */
     }
   </style>
 </head>
@@ -22,31 +31,38 @@
   <div class="main-layout">
     <div class="content">
       <h1>Current ISS Position</h1>
+      <!-- Interactive map container where ISS location will be displayed -->
       <div id="map"></div>
     </div>
 
+    <!-- Navigation section with QR codes for map controls -->
     <div class="qr-code-option-container">
+      <!-- Zoom in control option -->
       <div class="qr-code-option">
+        <!-- Custom SVG plus icon for zoom in -->
         <svg class="emoji" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
           stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
           style="vertical-align: middle; margin-right: 8px;">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <line x1="12" y1="5" x2="12" y2="19"></line> <!-- Vertical line -->
+          <line x1="5" y1="12" x2="19" y2="12"></line> <!-- Horizontal line -->
         </svg>
         <span class="text-content">Zoom In</span>
         <img src="../assets/qr_location_zoom_in.png" alt="Zoom In QR Code" class="qr-code">
       </div>
 
+      <!-- Zoom out control option -->
       <div class="qr-code-option">
+        <!-- Custom SVG minus icon for zoom out -->
         <svg class="emoji" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
           stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
           style="vertical-align: middle; margin-right: 8px;">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line> <!-- Horizontal line only -->
         </svg>
         <span class="text-content">Zoom Out</span>
         <img src="../assets/qr_location_zoom_out.png" alt="Zoom Out QR Code" class="qr-code">
       </div>
 
+      <!-- Back to main countdown page option -->
       <div class="qr-code-option">
         <span class="emoji">⬅</span>
         <span class="text-content">Back to Countdown</span>
@@ -56,27 +72,48 @@
   </div>
 
   <script>
+    // Extract URL parameter value by name
+    // Used to get ISS position and zoom level from query string
     function getParam(name) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(name);
     }
 
+    // Get ISS position parameters from URL
+    // Expected format: ?params={"latitude":48.123,"longitude":11.456,"zoom":5}
     const paramsStr = getParam('params');
-    let lat = 0, lon = 0, zoom = 3;
 
+    // Default values for ISS position and map zoom
+    let lat = 0;    // Default latitude (equator)
+    let lon = 0;    // Default longitude (prime meridian)
+    let zoom = 3;   // Default zoom level (world view)
+
+    // Parse position parameters if available
     if (paramsStr) {
       try {
         const params = JSON.parse(paramsStr);
+        // Extract and validate latitude (-90 to +90 degrees)
         lat = parseFloat(params.latitude) || 0;
+        // Extract and validate longitude (-180 to +180 degrees)
         lon = parseFloat(params.longitude) || 0;
+        // Extract and validate zoom level (1-18 typical range)
         zoom = parseInt(params.zoom) || 3;
       } catch (e) {
-        console.warn('Ungültiger JSON-Parameter "params"');
+        // Handle malformed JSON
+        console.warn('Invalid JSON parameter "params"');
       }
     }
 
+    // Initialize Leaflet map centered on ISS position
+    // Disable default zoom controls (using QR code controls instead)
     var map = L.map('map', { zoomControl: false }).setView([lat, lon], zoom);
+
+    // Add OpenStreetMap tile layer for the world map background
+    // Uses standard OSM tiles with attribution
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    // Add marker at ISS current position
+    // Shows exact location where ISS is currently orbiting
     var marker = L.marker([lat, lon]).addTo(map);
   </script>
 

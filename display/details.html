@@ -3,20 +3,24 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>ISS Pass Details</title>
+  <title>Details about the Next ISS Pass</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
+  <!-- Import shared time formatting functions -->
   <script src="../assets/js/functions.js"></script>
 </head>
 
 <body>
   <div class="main-layout">
     <div class="content">
-      <h1>ISS Pass Details</h1>
+      <h1>Details about the Next ISS Pass</h1>
+
+      <!-- Main container for displaying detailed pass information -->
       <div class="details-container" id="details">
         Loading pass details...
       </div>
     </div>
 
+    <!-- Navigation section with QR code to return to main countdown page -->
     <div class="qr-code-option-container">
       <div class="qr-code-option">
         <span class="emoji">⬅</span>
@@ -27,38 +31,64 @@
   </div>
 
   <script>
+    // Extract pass details from URL query parameters
     const urlParams = new URLSearchParams(window.location.search);
     const pass_details = urlParams.get('details');
 
+    // Convert Unix timestamp to human-readable local time format
+    // Input: Unix timestamp (seconds since epoch)
+    // Output: Localized date/time string (e.g., "7/17/2025, 10:30:00 PM")
     function formatTimestamp(utc) {
       const date = new Date(utc * 1000);
       return date.toLocaleString();
     }
 
+    // Display detailed information about the ISS pass
     function showDetails(data) {
       const container = document.getElementById('details');
+
       const visibilityNote = data.visible ? "Yes" : "No";
 
+      // Build detailed information display with all pass parameters
       container.innerHTML = `
+       <!-- Start time with azimuth angle and compass direction -->
        <div class="detail-item"><strong>Start:</strong> ${formatTimestamp(data.start_timestamp)} (${data.azimuth_start_deg}°, ${data.direction.split("→")[0].trim()})</div>
+
+       <!-- End time with azimuth angle and compass direction -->
        <div class="detail-item"><strong>End:</strong> ${formatTimestamp(data.end_timestamp)} (${data.azimuth_end_deg}°, ${data.direction.split("→")[1].trim()})</div>
+
+       <!-- Total duration formatted as human-readable time (uses formatTime from functions.js) -->
        <div class="detail-item"><strong>Duration:</strong> ${formatTime(data.duration_sec)}</div>
+
+       <!-- Whether the pass will be visible to the naked eye -->
        <div class="detail-item"><strong>Visible:</strong> ${visibilityNote}</div>
+
+       <!-- Highest point in the sky during the pass (in degrees above horizon) -->
        <div class="detail-item"><strong>Maximum Elevation:</strong> ${data.max_elevation_deg}°</div>
+
+       <!-- Path across the sky (e.g., "SW → NE") -->
        <div class="detail-item"><strong>Direction:</strong> ${data.direction}</div>
+
+       <!-- Estimated brightness based on elevation angle -->
        <div class="detail-item"><strong>Brightness Estimate:</strong> ${data.brightness_estimate}</div>
+
+       <!-- Distance to ISS at maximum elevation point -->
        <div class="detail-item"><strong>Flight Distance during Pass:</strong> ${data.distance_km.toFixed(1)} km</div>
-  `;
+      `;
     }
 
+    // Main execution: Parse and display pass details
     if (pass_details) {
       try {
+        // Decode URL-encoded JSON data and parse it
         const data = JSON.parse(decodeURIComponent(pass_details));
         showDetails(data);
       } catch (e) {
+        // Handle malformed JSON data
         document.getElementById('details').textContent = "❌ Failed to parse pass data.";
       }
     } else {
+      // Handle missing data parameter
       document.getElementById('details').textContent = "❌ No pass data provided.";
     }
   </script>

@@ -20,7 +20,9 @@
 
       <!-- Normal layout: shown when data is available -->
       <div id="normal-layout">
+        <!-- Main NASA image display -->
         <img id="picture" />
+        <!-- Information panel with title, date, and explanation -->
         <div class="explanation-box">
           <h2 id="title"></h2>
           <h3 id="subheadline"></h3>
@@ -29,25 +31,30 @@
       </div>
     </div>
 
+    <!-- Navigation section with QR codes for different picture dates -->
     <div class="qr-code-option-container">
+      <!-- Always visible: Go to previous day -->
       <div class="qr-code-option">
         <span class="emoji">📅</span>
         <span class="text-content">Get picture of the day before</span>
         <img src="../assets/qr_picture_day_before.png" alt="Back QR" class="qr-code">
       </div>
 
+      <!-- Conditionally visible: Go to next day (only when viewing past dates) -->
       <div class="qr-code-option" id="qr-next-day" style="display:none;">
         <span class="emoji">📅</span>
         <span class="text-content">Get picture of the next day</span>
         <img src="../assets/qr_picture_day_after.png" alt="Forward QR" class="qr-code">
       </div>
 
+      <!-- Conditionally visible: Return to today's picture (only when viewing past dates) -->
       <div class="qr-code-option" id="qr-today" style="display:none;">
         <span class="emoji">📅</span>
         <span class="text-content">Get picture of today</span>
         <img src="../assets/qr_picture_today.png" alt="Today QR" class="qr-code">
       </div>
 
+      <!-- Always visible: Return to main countdown page -->
       <div class="qr-code-option">
         <span class="emoji">⬅</span>
         <span class="text-content">Back to Countdown</span>
@@ -57,22 +64,29 @@
   </div>
 
   <script>
+    // Extract URL parameter value by name
+    // Used to get NASA picture data from query string
     function getParameterByName(name) {
       const url = new URL(window.location.href);
       return url.searchParams.get(name);
     }
 
+    // Get NASA picture parameters from URL
+    // Expected format: ?params={"title":"...","url":"...","explanation":"...","date":"...","days_back":"..."}
     let paramsRaw = getParameterByName('params');
     let params = null;
 
+    // Parse JSON parameters if available
     if (paramsRaw) {
       try {
         params = JSON.parse(paramsRaw);
       } catch (e) {
+        // Handle malformed JSON
         console.error('Error parsing params:', e);
       }
     }
 
+    // Get DOM elements for dynamic content updates
     const titleEl = document.getElementById('title');
     const pictureEl = document.getElementById('picture');
     const explanationEl = document.getElementById('explanation');
@@ -84,38 +98,43 @@
     const contentEl = document.querySelector('.content');
     const errorMessageEl = document.getElementById('error-message');
 
+    // Display picture data or show error message
     if (params) {
-      // Show normal layout with picture and text
+      // Valid data available - show normal layout with picture and information
       errorLayoutEl.style.display = 'none';
       normalLayoutEl.style.display = 'flex';
-      // No need for picture-layout class since #normal-layout handles the layout
 
+      // Determine how many days back from today this picture is from
       const goXDaysBack = parseInt(params['days_back']) || 0;
 
+      // Set appropriate subtitle and conditional navigation based on date
       if (goXDaysBack === 0) {
+        // Today's picture - no need for "next day" or "today" options
         subheadlineEl.textContent = 'NASA Picture of the Day - ' + params.date;
         qrNextDayEl.style.display = 'none';
         qrTodayEl.style.display = 'none';
       } else if (goXDaysBack === 1) {
+        // Yesterday's picture - show "today" option but not "next day"
         subheadlineEl.textContent = 'NASA Picture from 1 day ago - ' + params.date;
         qrNextDayEl.style.display = 'none';
         qrTodayEl.style.display = 'flex';
       } else {
+        // Older picture - show both "next day" and "today" options
         subheadlineEl.textContent = `NASA Picture from ${goXDaysBack} days ago - ` + params.date;
         qrNextDayEl.style.display = 'flex';
         qrTodayEl.style.display = 'flex';
       }
 
-      pictureEl.src = params.url;
-      explanationEl.textContent = params.explanation || '';
-      titleEl.textContent = params.title || '';
+      // Populate picture and text content from NASA API data
+      pictureEl.src = params.url;                    // NASA image URL
+      explanationEl.textContent = params.explanation || '';  // Scientific explanation
+      titleEl.textContent = params.title || '';              // Picture title
     } else {
-      // Show error layout with title and error message
+      // No valid data - show error layout
       normalLayoutEl.style.display = 'none';
       errorLayoutEl.style.display = 'block';
-      // No need to remove picture-layout class since it's not used
 
-      // Hide conditional QR codes
+      // Hide conditional navigation options since no valid date context
       qrNextDayEl.style.display = 'none';
       qrTodayEl.style.display = 'none';
     }

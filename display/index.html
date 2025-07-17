@@ -5,7 +5,9 @@
   <meta charset="UTF-8" />
   <title>ISS Screen Control</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
+  <!-- jQuery for AJAX communication with CPEE workflow engine -->
   <script src="https://cpee.org/js_libs/jquery.min.js"></script>
+  <!-- Import shared time formatting functions -->
   <script src="../assets/js/functions.js"></script>
 </head>
 
@@ -14,34 +16,50 @@
     <div class="content">
       <h1>Next ISS Pass over Garching</h1>
 
+      <!-- Main countdown display container with dynamic content -->
       <div id="countdown-container">
+        <!-- Top message area (appears during final countdown phase) -->
         <div id="top-message"></div>
+
+        <!-- Main countdown display with time blocks -->
         <div id="countdown">Loading countdown...</div>
+
+        <!-- Final message area (appears after pass or during pass) -->
         <div id="final-message"></div>
       </div>
     </div>
 
+    <!-- Navigation section with QR codes for different ISS information pages -->
     <div class="qr-code-option-container">
+      <!-- Seven-day forecast option -->
       <div class="qr-code-option">
         <span class="emoji">🔭</span>
         <span class="text-content">Show Seven Day Forecast</span>
         <img src="../assets/qr_forecast.png" alt="Forecast QR" class="qr-code">
       </div>
+
+      <!-- Current ISS location option -->
       <div class="qr-code-option">
         <span class="emoji">🌍</span>
         <span class="text-content">Show ISS Location</span>
         <img src="../assets/qr_location.png" alt="Location QR" class="qr-code">
       </div>
+
+      <!-- Current crew information option -->
       <div class="qr-code-option">
         <span class="emoji">🤓</span>
         <span class="text-content">Show ISS Crew</span>
-        <img src="../assets/qr_crew.png" alt="Crew QR" class="qr-code">
+        <img src="../assets/qr_location.png" alt="Crew QR" class="qr-code">
       </div>
+
+      <!-- NASA picture of the day option -->
       <div class="qr-code-option">
         <span class="emoji">📡</span>
         <span class="text-content">Show NASA Picture of the Day</span>
         <img src="../assets/qr_picture.png" alt="Picture QR" class="qr-code">
       </div>
+
+      <!-- Detailed pass information option -->
       <div class="qr-code-option">
         <span class="emoji">🛰️</span>
         <span class="text-content">Show Pass Details</span>
@@ -51,35 +69,42 @@
   </div>
 
   <script>
+    // Send command to CPEE workflow engine via AJAX
+    // Used for workflow communication and control
     function sendCommand(command) {
       $.ajax({
         type: "PUT",
-        url: window.name,
+        url: window.name,                           // CPEE callback URL stored in window.name
         contentType: "application/json",
         data: JSON.stringify({ command: command }),
         success: function () {
-          alert("✅ Command sent: " + command);
+          alert("Command sent: " + command);
         },
         error: function () {
-          alert("❌ Failed to send command");
+          alert("Failed to send command");
         }
       });
     }
 
+    // Extract pass data from URL query parameters
     const urlParams = new URLSearchParams(window.location.search);
     const paramsStr = urlParams.get('params');
 
+    // Get DOM elements for dynamic content updates
     const topMessageEl = document.getElementById('top-message');
     const countdownEl = document.getElementById('countdown');
     const finalMessageEl = document.getElementById('final-message');
 
-    let startTimestamp = null;
-    let endTimestamp = null;
-    let visibility = false;
+    // Initialize pass data variables
+    let startTimestamp = null;    // When the ISS pass begins (Unix timestamp in ms)
+    let endTimestamp = null;      // When the ISS pass ends (Unix timestamp in ms)
+    let visibility = false;       // Whether the pass is visible to the naked eye
 
+    // Parse pass parameters from URL if available
     if (paramsStr) {
       try {
         const params = JSON.parse(paramsStr);
+        // Convert Unix timestamps from seconds to milliseconds for JavaScript Date compatibility
         startTimestamp = params.start_timestamp ? parseInt(params.start_timestamp) * 1000 : null;
         endTimestamp = params.end_timestamp ? parseInt(params.end_timestamp) * 1000 : null;
         visibility = params.visible ? params.visible : false;
@@ -88,28 +113,37 @@
       }
     }
 
+    // Display fallback message when no valid prediction data is available
     function noValidPrediction() {
       topMessageEl.textContent = "";
       countdownEl.textContent = "No prediction data available";
       finalMessageEl.textContent = "";
     }
 
+    // Validate pass data and start countdown if valid
     if (!startTimestamp || !endTimestamp || isNaN(startTimestamp) || isNaN(endTimestamp)) {
       noValidPrediction();
     } else {
       const now = Date.now();
 
+      // Check if pass has already occurred
       if (startTimestamp < now && endTimestamp < now) {
         noValidPrediction();
       } else {
+        // Calculate total pass duration in seconds
         const durationSeconds = Math.floor((endTimestamp - startTimestamp) / 1000);
 
+        // Main countdown update function (called every second)
+        // Displays different content based on pass status
         function updateCountdown() {
           const now = Date.now();
 
           if (now < startTimestamp) {
+            // Pass hasn't started yet - show countdown to start
             const diff = Math.floor((startTimestamp - now) / 1000);
+
             if (diff > 60) {
+              // Normal countdown mode (more than 1 minute remaining)
               topMessageEl.textContent = "";
               countdownEl.innerHTML = `Next pass in
                         <div class="countdown-blocks">
@@ -118,29 +152,33 @@
                         The pass duration is ${formatTime(durationSeconds)}.
                         The pass will ${visibility ? 'be visible' : 'not be visible'}.`;
               finalMessageEl.textContent = "";
-            }
-            else {
+            } else {
+              // Final countdown mode (less than 1 minute remaining)
               topMessageEl.textContent = "The ISS will be here in a few seconds!";
               countdownEl.innerHTML = `<div class="countdown-blocks">
                             ${formatTimeBlocks(diff)}
                         </div>`;
-              countdownEl.classList.add("alert");
+              countdownEl.classList.add("alert");  // Add visual alert styling
               finalMessageEl.textContent = "🚀 Get ready!!!";
             }
           } else if (now >= startTimestamp && now < endTimestamp) {
+            // Pass is currently happening - show countdown to end
             const remaining = Math.floor((endTimestamp - now) / 1000);
             topMessageEl.textContent = "The ISS is here now! Remaining time:";
             countdownEl.innerHTML = `<div class="countdown-blocks">
                             ${formatTimeBlocks(remaining)}
                         </div>`;
-            countdownEl.classList.add("alert");
+            countdownEl.classList.add("alert");     // Add visual alert styling
             finalMessageEl.textContent = visibility
               ? "👀 The ISS is visible today! Don't miss it!"
               : "👀 The ISS is not visible today. But maybe you can still feel how close it is in your heart.";
           } else {
+            // Pass has finished - show random message
             topMessageEl.textContent = "";
             countdownEl.textContent = "";
-            countdownEl.classList.remove("alert");
+            countdownEl.classList.remove("alert");   // Remove alert styling
+
+            // Array of random post-pass messages
             const messages = [
               "The ISS is gone. Do not worry — it will be back soon. 🚀",
               "The ISS is gone. Time to reboot your telescope! 🔄🛰️",
@@ -156,12 +194,17 @@
               "The station has passed, but good company is always in orbit down here. 👥🌎",
               "The ISS is out of range — but someone nearby might still enjoy a nerdy space fact. 🤓🌌"
             ];
+
+            // Select and display a random message
             const randomIndex = Math.floor(Math.random() * messages.length);
             finalMessageEl.textContent = messages[randomIndex];
           }
         }
 
+        // Initialize countdown display immediately
         updateCountdown();
+
+        // Update countdown every second to keep it current
         setInterval(updateCountdown, 1000);
       }
     }
