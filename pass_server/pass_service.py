@@ -16,9 +16,9 @@ import json
 app = Flask(__name__)
 
 # --- Configuration Constants ---
-latitude = 48.262839        # Observer latitude in degrees (Munich area)
-longitude = 11.666853       # Observer longitude in degrees (Munich area)
-elevation_m = 0             # Observer elevation in meters above sea level
+latitude = 48.262839        # Observer latitude in degrees (Garching Screen Location)
+longitude = 11.666853       # Observer longitude in degrees (Garching Screen Location)
+elevation_m = 481            # Observer elevation in meters above sea level
 berlin_tz = ZoneInfo("Europe/Berlin")  # Local timezone
 CACHE_FILE = 'passes_cache.json'       # File to cache calculated passes
 CACHE_MAX_AGE_MINUTES = 60             # Cache expires after 60 minutes
@@ -33,7 +33,7 @@ sun = eph['sun']            # Sun object for illumination calculations
 observer = Topos(latitude_degrees=latitude, longitude_degrees=longitude, elevation_m=elevation_m)
 
 # --- Satellite Loading Function ---
-def load_satellite():
+def load_iss():
     """Download and parse Two-Line Element (TLE) data for the International Space Station."""
     TLE_URL = "https://celestrak.org/NORAD/elements/stations.txt"
 
@@ -46,12 +46,14 @@ def load_satellite():
             name = line.strip()                    # Satellite name
             tle_line1 = tle_text[i + 1].strip()   # First line of TLE data
             tle_line2 = tle_text[i + 2].strip()   # Second line of TLE data
+            # Create and return an object representing the ISS to compute the ISS's real-time
+            # position and trajectory to predict visible passes over the observer's location.
             return EarthSatellite(tle_line1, tle_line2, name, ts)
 
     raise ValueError("ISS not found in TLE data.")
 
 # Load ISS satellite data at startup
-satellite = load_satellite()
+iss = load_iss()
 
 # --- Cache Management Functions ---
 def cache_is_expired():
@@ -90,7 +92,7 @@ def find_passes(days=7):
     t1 = ts.utc(now.utc_datetime() + timedelta(days=days))
 
     # Find events with minimum altitude of 10 degrees (otherwise passes are too low to observe)
-    times, events = satellite.find_events(observer, t0, t1, altitude_degrees=10.0)
+    times, events = iss.find_events(observer, t0, t1, altitude_degrees=10.0)
     passes = []
 
     # Process events in groups of 3: rise, culmination (max), set
@@ -104,7 +106,7 @@ def find_passes(days=7):
         set_time = times[i + 2]   # ISS sets below 10 degrees
 
         # Calculate maximum elevation angle during this pass
-        alt, az, _ = (satellite - observer).at(max_time).altaz()
+        alt, az, _ = (iss - observer).at(max_time).altaz()
         max_elev = alt.degrees
 
         # Calculate total pass duration in seconds
@@ -120,7 +122,7 @@ def find_passes(days=7):
         visible = False
         for t in sample_times:
             # Get ISS position at this sample time
-            iss_position = satellite.at(t)
+            iss_position = iss.at(t)
             subpoint = wgs84.subpoint(iss_position)
 
             # Check if ISS is illuminated by the Sun
@@ -140,7 +142,7 @@ def find_passes(days=7):
             observer_in_darkness = sun_alt < -6.0
 
             # Verify ISS is high enough above horizon for good visibility
-            iss_alt, _, _ = (satellite - observer).at(t).altaz()
+            iss_alt, _, _ = (iss - observer).at(t).altaz()
             iss_high_enough = iss_alt.degrees >= 10.0
 
             # Pass is visible if all conditions are met:
@@ -216,8 +218,8 @@ def next_pass_endpoint():
     set_time = ts.utc(datetime.fromtimestamp(next_pass['end_timestamp'], tz=ZoneInfo("UTC")))
 
     # Get altitude and azimuth at rise and set
-    alt_rise, az_rise, _ = (satellite - observer).at(rise_time).altaz()
-    alt_set, az_set, _ = (satellite - observer).at(set_time).altaz()
+    alt_rise, az_rise, _ = (iss - observer).at(rise_time).altaz()
+    alt_set, az_set, _ = (iss - observer).at(set_time).altaz()
 
     # Convert azimuth to compass direction
     def azimuth_to_direction(deg):
@@ -230,7 +232,7 @@ def next_pass_endpoint():
     direction_text = f"{azimuth_to_direction(az_rise.degrees)} → {azimuth_to_direction(az_set.degrees)}"
 
     # Calculate distance to ISS at maximum elevation
-    iss_at_max = satellite.at(max_time)
+    iss_at_max = iss.at(max_time)
     distance_km = round(iss_at_max.distance().km, 1)
 
     # Estimate brightness based on maximum elevation angle
