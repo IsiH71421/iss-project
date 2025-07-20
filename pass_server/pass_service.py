@@ -18,7 +18,7 @@ app = Flask(__name__)
 # --- Configuration Constants ---
 latitude = 48.262839        # Observer latitude in degrees (Garching Screen Location)
 longitude = 11.666853       # Observer longitude in degrees (Garching Screen Location)
-elevation_m = 481            # Observer elevation in meters above sea level
+elevation_m = 481            # Observer elevation in meters above sea level (Garching Screen Location)
 berlin_tz = ZoneInfo("Europe/Berlin")  # Local timezone
 CACHE_FILE = 'passes_cache.json'       # File to cache calculated passes
 CACHE_MAX_AGE_MINUTES = 60             # Cache expires after 60 minutes
@@ -30,9 +30,9 @@ earth = eph['earth']        # Earth object for calculations
 sun = eph['sun']            # Sun object for illumination calculations
 
 # Create observer position object
-observer = Topos(latitude_degrees=latitude, longitude_degrees=longitude, elevation_m=elevation_m)
+observer_geodetic_position = Topos(latitude_degrees=latitude, longitude_degrees=longitude, elevation_m=elevation_m)
 
-# --- Satellite Loading Function ---
+# --- Satellite (ISS) Loading Function ---
 def load_iss():
     """Download and parse Two-Line Element (TLE) data for the International Space Station."""
     TLE_URL = "https://celestrak.org/NORAD/elements/stations.txt"
@@ -92,7 +92,7 @@ def find_passes(days=7):
     t1 = ts.utc(now.utc_datetime() + timedelta(days=days))
 
     # Find events with minimum altitude of 10 degrees (otherwise passes are too low to observe)
-    times, events = iss.find_events(observer, t0, t1, altitude_degrees=10.0)
+    times, events = iss.find_events(observer_geodetic_position, t0, t1, altitude_degrees=10.0)
     passes = []
 
     # Process events in groups of 3: rise, culmination (max), set
@@ -106,7 +106,7 @@ def find_passes(days=7):
         set_time = times[i + 2]   # ISS sets below 10 degrees
 
         # Calculate maximum elevation angle during this pass
-        alt, az, _ = (iss - observer).at(max_time).altaz()
+        alt, az, _ = (iss - observer_geodetic_position).at(max_time).altaz()
         max_elev = alt.degrees
 
         # Calculate total pass duration in seconds
@@ -138,21 +138,20 @@ def find_passes(days=7):
             # Needed to compute astronomical observations (e.g. sun altitude) from the ISS location
             iss_skyfield_location = earth + iss_geodetic_position
 
-            # Get the apparent altitude of the Sun as seen from the ISS location at this time,
-            # calculated at the ISS position derived from WGS84 geodetic coordinates
+            # Get the apparent altitude of the Sun as seen from the ISS location at this time
             sun_altitude_from_iss_location = iss_skyfield_location.at(t).observe(sun).apparent().altaz()[0].degrees
 
             # ISS is illuminated when sun is higher than -6 degrees (not in Earth's shadow)
             iss_is_illuminated = sun_altitude_from_iss_location > -6.0
 
             # Check if observer is in darkness (nautical twilight or darker)
-            obs_pos = earth + observer
-            sun_alt = obs_pos.at(t).observe(sun).apparent().altaz()[0].degrees
-            observer_in_darkness = sun_alt < -6.0
+            observer_skyfield_location = earth + observer_geodetic_position
+            sun_altitude = observer_skyfield_location.at(t).observe(sun).apparent().altaz()[0].degrees
+            observer_in_darkness = sun_altitude < -6.0
 
             # Verify ISS is high enough above horizon for good visibility
-            iss_alt, _, _ = (iss - observer).at(t).altaz()
-            iss_high_enough = iss_alt.degrees >= 10.0
+            iss_altitude, _, _ = (iss - observer_geodetic_position).at(t).altaz()
+            iss_high_enough = iss_altitude.degrees >= 10.0
 
             # Pass is visible if all conditions are met:
             # 1. ISS is illuminated by sun
@@ -163,17 +162,17 @@ def find_passes(days=7):
                 break
 
         # Convert UTC times to local Berlin timezone
-        rise_local = rise_time.utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
-        max_local = max_time.utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
-        set_local = set_time.utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
+        rise_time_local = rise_time.utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
+        max_time_local = max_time.utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
+        set_time_local = set_time.utc_datetime().replace(tzinfo=ZoneInfo("UTC")).astimezone(berlin_tz)
 
         # Build pass data dictionary
         passes.append({
-            "start": rise_local.strftime('%Y-%m-%d %H:%M:%S %Z'),       # Human readable start time
-            "start_timestamp": int(rise_local.timestamp()),             # Unix timestamp for start
-            "end": set_local.strftime('%Y-%m-%d %H:%M:%S %Z'),          # Human readable end time
-            "end_timestamp": int(set_local.timestamp()),                # Unix timestamp for end
-            "max": max_local.strftime('%Y-%m-%d %H:%M:%S %Z'),          # Time of maximum elevation
+            "start": rise_time_local.strftime('%Y-%m-%d %H:%M:%S %Z'),       # Human readable start time
+            "start_timestamp": int(rise_time_local.timestamp()),             # Unix timestamp for start
+            "end": set_time_local.strftime('%Y-%m-%d %H:%M:%S %Z'),          # Human readable end time
+            "end_timestamp": int(set_time_local.timestamp()),                # Unix timestamp for end
+            "max": max_time_local.strftime('%Y-%m-%d %H:%M:%S %Z'),          # Human readable time of maximum elevation
             "max_elevation_deg": round(max_elev, 1),                    # Maximum elevation in degrees
             "duration_sec": duration_seconds,                           # Total pass duration in seconds
             "visible": visible                                          # Whether pass is visible for the common observer
@@ -218,10 +217,13 @@ def next_pass_endpoint():
    # Select the next upcoming ISS pass
     next_iss_pass = cached_passes[0]
 
-    # Calculate additional details for the next pass (These can be calculated quickly in comparison
-    # to the cached prediction data):
+    # Calculate additional details for the next pass.
+    # These can be calculated quickly in comparison to the cached prediction data:
+
     # Calculate the time of maximum elevation (start time + half duration) in UTC
+    # datetime object (Python standard library)
     max_elevation_time_dt = datetime.fromtimestamp(next_iss_pass['start_timestamp'] + (next_iss_pass['duration_sec'] // 2), tz=ZoneInfo("UTC"))
+    # Skyfield Time object (astronomy library)
     max_elevation_time = ts.utc(max_elevation_time_dt)
 
     # Calculate rise and set times in UTC
@@ -229,8 +231,8 @@ def next_pass_endpoint():
     set_time_utc = ts.utc(datetime.fromtimestamp(next_iss_pass['end_timestamp'], tz=ZoneInfo("UTC")))
 
     # Calculate altitude and azimuth at rise and set times
-    altitude_at_rise, azimuth_at_rise, _ = (iss - observer).at(rise_time_utc).altaz()
-    altitide_at_set, azimuth_at_set, _ = (iss - observer).at(set_time_utc).altaz()
+    altitude_at_rise, azimuth_at_rise, _ = (iss - observer_geodetic_position).at(rise_time_utc).altaz()
+    altitide_at_set, azimuth_at_set, _ = (iss - observer_geodetic_position).at(set_time_utc).altaz()
 
     def azimuth_to_direction(deg):
         """Convert azimuth angle in degrees to compass direction."""
@@ -270,6 +272,6 @@ def next_pass_endpoint():
 
 # --- Server Startup ---
 if __name__ == "__main__":
-    # Start server accessible from outside on port 52139
-    # Using IPv6 localhost (::1) to bind to all interfaces
+    # Start server accessible from external connections on port 52139
+    # Using IPv6 localhost (::1)
     app.run(host='::1', port=52139)
