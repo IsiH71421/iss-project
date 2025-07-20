@@ -123,18 +123,27 @@ def find_passes(days=7):
         for t in sample_times:
             # Get ISS position at this sample time
             iss_position = iss.at(t)
-            subpoint = wgs84.subpoint(iss_position)
 
-            # Check if ISS is illuminated by the Sun
-            # Create observer position at ISS location for sun angle calculation
-            iss_observer = wgs84.latlon(latitude_degrees=subpoint.latitude.degrees,
-                                        longitude_degrees=subpoint.longitude.degrees,
-                                        elevation_m=subpoint.elevation.m)
-            iss_location = earth + iss_observer
-            sun_alt_at_iss = iss_location.at(t).observe(sun).apparent().altaz()[0].degrees
+            # Get the subpoint on Earth (latitude, longitude, elevation) directly beneath the ISS at the
+            # given time, using the WGS84 reference ellipsoid (standard Earth model).
+            iss_subpoint = wgs84.subpoint(iss_position)
+
+            # Define the ISS position using geodetic coordinates (latitude, longitude, altitude)
+            # The latitude and longitude come from the subpoint; altitude is the ISS altitude (~400 km)
+            iss_geodetic_position = wgs84.latlon(latitude_degrees=iss_subpoint.latitude.degrees,
+                                        longitude_degrees=iss_subpoint.longitude.degrees,
+                                        elevation_m=iss_subpoint.elevation.m)
+
+            # Convert the geodetic position into a full Skyfield observer object
+            # Needed to compute astronomical observations (e.g. sun altitude) from the ISS location
+            iss_skyfield_location = earth + iss_geodetic_position
+
+            # Get the apparent altitude of the Sun as seen from the ISS location at this time,
+            # calculated at the ISS position derived from WGS84 geodetic coordinates
+            sun_altitude_from_iss_location = iss_skyfield_location.at(t).observe(sun).apparent().altaz()[0].degrees
 
             # ISS is illuminated when sun is higher than -6 degrees (not in Earth's shadow)
-            iss_lit = sun_alt_at_iss > -6.0
+            iss_is_illuminated = sun_altitude_from_iss_location > -6.0
 
             # Check if observer is in darkness (nautical twilight or darker)
             obs_pos = earth + observer
@@ -149,7 +158,7 @@ def find_passes(days=7):
             # 1. ISS is illuminated by sun
             # 2. Observer is in darkness
             # 3. ISS is high enough above horizon
-            if iss_lit and observer_in_darkness and iss_high_enough:
+            if iss_is_illuminated and observer_in_darkness and iss_high_enough:
                 visible = True
                 break
 
