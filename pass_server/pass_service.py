@@ -205,67 +205,68 @@ def passes_endpoint():
 @app.route('/next_pass')
 def next_pass_endpoint():
     """API endpoint to get detailed information about the next ISS pass."""
+
     # Update cache if expired (in background thread to avoid blocking)
     if cache_is_expired():
         threading.Thread(target=update_passes_cache).start()
 
-    # Load passes from cache
-    passes = load_passes_from_cache()
-    if not passes:
+    # Load cached ISS passes
+    cached_passes = load_passes_from_cache()
+    if not cached_passes:
         return jsonify({"error": "No passes found"}), 404
 
-    # Get the next (first) pass
-    next_pass = passes[0]
+   # Select the next upcoming ISS pass
+    next_iss_pass = cached_passes[0]
 
-    # Calculate additional details for the next pass:
-    # Time of maximum elevation (start time + half duration)
-    max_time_dt = datetime.fromtimestamp(next_pass['start_timestamp'] + (next_pass['duration_sec'] // 2), tz=ZoneInfo("UTC"))
-    max_time = ts.utc(max_time_dt)
+    # Calculate additional details for the next pass (These can be calculated quickly in comparison
+    # to the cached prediction data):
+    # Calculate the time of maximum elevation (start time + half duration) in UTC
+    max_elevation_time_dt = datetime.fromtimestamp(next_iss_pass['start_timestamp'] + (next_iss_pass['duration_sec'] // 2), tz=ZoneInfo("UTC"))
+    max_elevation_time = ts.utc(max_elevation_time_dt)
 
-    # Calculate azimuth angles at rise and set times
-    rise_time = ts.utc(datetime.fromtimestamp(next_pass['start_timestamp'], tz=ZoneInfo("UTC")))
-    set_time = ts.utc(datetime.fromtimestamp(next_pass['end_timestamp'], tz=ZoneInfo("UTC")))
+    # Calculate rise and set times in UTC
+    rise_time_utc = ts.utc(datetime.fromtimestamp(next_iss_pass['start_timestamp'], tz=ZoneInfo("UTC")))
+    set_time_utc = ts.utc(datetime.fromtimestamp(next_iss_pass['end_timestamp'], tz=ZoneInfo("UTC")))
 
-    # Get altitude and azimuth at rise and set
-    alt_rise, az_rise, _ = (iss - observer).at(rise_time).altaz()
-    alt_set, az_set, _ = (iss - observer).at(set_time).altaz()
+    # Calculate altitude and azimuth at rise and set times
+    altitude_at_rise, azimuth_at_rise, _ = (iss - observer).at(rise_time_utc).altaz()
+    altitide_at_set, azimuth_at_set, _ = (iss - observer).at(set_time_utc).altaz()
 
-    # Convert azimuth to compass direction
     def azimuth_to_direction(deg):
         """Convert azimuth angle in degrees to compass direction."""
         directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"]
         idx = int((deg + 22.5) // 45)
         return directions[idx]
 
-    # Create direction text showing path across sky
-    direction_text = f"{azimuth_to_direction(az_rise.degrees)} → {azimuth_to_direction(az_set.degrees)}"
+    # Determine ISS pass path direction from rise azimuth to set azimuth
+    pass_direction = f"{azimuth_to_direction(azimuth_at_rise.degrees)} → {azimuth_to_direction(azimuth_at_set.degrees)}"
 
-    # Calculate distance to ISS at maximum elevation
-    iss_at_max = iss.at(max_time)
-    distance_km = round(iss_at_max.distance().km, 1)
+    # Get ISS position at maximum elevation time and calculate distance from observer in kilometers
+    iss_position_at_max = iss.at(max_elevation_time)
+    distance_km_at_max = round(iss_position_at_max.distance().km, 1)
 
-    # Estimate brightness based on maximum elevation angle
+    # Estimate brightness based on maximum elevation angle:
     # Higher elevation = closer distance = brighter appearance
-    max_elev = next_pass['max_elevation_deg']
+    max_elev = next_iss_pass['max_elevation_deg']
     if max_elev >= 60:
-        brightness = "very bright"
+        brightness_level = "very bright"
     elif max_elev >= 40:
-        brightness = "bright"
+        brightness_level = "bright"
     elif max_elev >= 20:
-        brightness = "moderate"
+        brightness_level = "moderate"
     else:
-        brightness = "faint"
+        brightness_level = "faint"
 
-    # Add calculated details to the pass data
-    next_pass.update({
-        "azimuth_start_deg": round(az_rise.degrees, 1),
-        "azimuth_end_deg": round(az_set.degrees, 1),
-        "direction": direction_text,
-        "distance_km": distance_km,
-        "brightness_estimate": brightness
+    # Add calculated details to the pass data response
+    next_iss_pass.update({
+        "azimuth_start_deg": round(azimuth_at_rise.degrees, 1),
+        "azimuth_end_deg": round(azimuth_at_set.degrees, 1),
+        "direction": pass_direction,
+        "distance_km": distance_km_at_max,
+        "brightness_estimate": brightness_level
     })
 
-    return jsonify(next_pass)
+    return jsonify(next_iss_pass)
 
 # --- Server Startup ---
 if __name__ == "__main__":
