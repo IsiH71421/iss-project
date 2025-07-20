@@ -243,7 +243,7 @@ def next_pass_endpoint():
     # Determine ISS pass path direction from rise azimuth to set azimuth
     pass_direction = f"{azimuth_to_direction(azimuth_at_rise.degrees)} → {azimuth_to_direction(azimuth_at_set.degrees)}"
 
-    # Get ISS position at maximum elevation time and calculate distance from observer in kilometers
+    # Get ISS position at maximum elevation time and calculate distance from earth center in kilometers
     iss_position_at_max = iss.at(max_elevation_time)
     distance_km_at_max = round(iss_position_at_max.distance().km, 1)
 
