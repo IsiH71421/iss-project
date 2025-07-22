@@ -113,8 +113,12 @@
 
     // Add OpenStreetMap tile layer for the world map background
     // Uses standard OSM tiles with attribution
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { noWrap: true }).addTo(map);
 
+    map.setMaxBounds([
+      [-85, -180],
+      [85, 180]
+    ]);
     // Add marker at ISS current position
     // Shows exact location where ISS is currently orbiting
     var marker = L.marker([lat, lon]).addTo(map);
