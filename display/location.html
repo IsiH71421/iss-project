@@ -92,14 +92,10 @@
     if (paramsStr) {
       try {
         const params = JSON.parse(paramsStr);
-        // Extract and validate latitude (-90 to +90 degrees)
         lat = parseFloat(params.latitude) || 0;
-        // Extract and validate longitude (-180 to +180 degrees)
         lon = parseFloat(params.longitude) || 0;
-        // Extract and validate zoom level (1-18 typical range)
         zoom = parseInt(params.zoom) || 3;
       } catch (e) {
-        // Handle malformed JSON
         console.warn('Invalid JSON parameter "params"');
       }
     }
