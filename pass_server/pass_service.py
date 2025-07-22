@@ -197,7 +197,7 @@ def passes_endpoint():
         days = int(days_str)
         if days < 1 or days > 7:
             return jsonify({"error": "days must be between 1 and 7"}), 400
-        return jsonify(passes[:20])  # Return maximum 20 passes
+        return jsonify(passes[:10])  # Return maximum 10 passes
     except ValueError:
         return jsonify({"error": "Invalid days parameter"}), 400
 
