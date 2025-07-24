@@ -1,0 +1,437 @@
+<testset xmlns="http://cpee.org/ns/properties/2.0">
+  <executionhandler>ruby</executionhandler>
+  <dataelements/>
+  <endpoints>
+    <timeout>https://cpee.org/services/powernap.php</timeout>
+    <subprocess>https://cpee.org/flow/start/url/</subprocess>
+    <frames_init>https-post://cpee.org/out/frames/iss/</frames_init>
+    <send>https-post://cpee.org/ing/correlators/message/send/</send>
+    <frames_display>https-put://cpee.org/out/frames/iss/</frames_display>
+    <receive>https-get://cpee.org/ing/correlators/message/receive/</receive>
+    <waitqr>https-get://lehre.bpm.in.tum.de/~ge25fel/iss/waitqr/initiate.php</waitqr>
+  </endpoints>
+  <attributes>
+    <guarded>none</guarded>
+    <modeltype>CPEE</modeltype>
+    <theme>extended</theme>
+    <guarded_id/>
+    <info>iss_screen_model</info>
+    <creator>Christine Ashcreek</creator>
+    <author>Christine Ashcreek</author>
+    <model_uuid>28012eda-aa83-4050-b1ce-3251718ecd6b</model_uuid>
+    <model_version/>
+    <design_dir>Teaching.dir/Prak.dir/TUM-Prak-25-SS.dir/Helling_Isabell.dir/</design_dir>
+    <design_stage>development</design_stage>
+  </attributes>
+  <description>
+    <description xmlns="http://cpee.org/ns/description/1.0">
+      <call id="a5" endpoint="frames_init">
+        <parameters>
+          <label>Init Frame</label>
+          <arguments>
+            <style_url>https://cpee.org/form/frames.css</style_url>
+            <document_url/>
+            <x_amount>5</x_amount>
+            <y_amount>8</y_amount>
+            <lang>de-at</lang>
+            <document_name>ISS Frame</document_name>
+          </arguments>
+        </parameters>
+        <code>
+          <prepare/>
+          <finalize output="result"/>
+          <update output="result"/>
+          <rescue output="result"/>
+        </code>
+        <annotations>
+          <_generic/>
+          <_timing>
+            <_timing_weight/>
+            <_timing_avg/>
+            <explanations/>
+          </_timing>
+          <_shifting>
+            <_shifting_type>Duration</_shifting_type>
+          </_shifting>
+          <_context_data_analysis>
+            <probes/>
+            <ips/>
+          </_context_data_analysis>
+          <report>
+            <url/>
+          </report>
+          <_notes>
+            <_notes_general/>
+          </_notes>
+        </annotations>
+        <documentation>
+          <input/>
+          <output/>
+          <implementation>
+            <description/>
+          </implementation>
+          <code>
+            <description/>
+          </code>
+        </documentation>
+      </call>
+      <manipulate id="a4" label="Init Data Elements">data.qr = {"navigate":"index"}
+data.zoom = 3
+data.days_back = 0</manipulate>
+      <call id="a6" endpoint="frames_display">
+        <parameters>
+          <label>Clear</label>
+          <arguments>
+            <type>set</type>
+            <lx>0</lx>
+            <ly>0</ly>
+            <x_amount>5</x_amount>
+            <y_amount>8</y_amount>
+            <button/>
+            <style/>
+            <urls/>
+            <default/>
+          </arguments>
+        </parameters>
+        <code>
+          <prepare/>
+          <finalize output="result"/>
+          <update output="result"/>
+          <rescue output="result"/>
+        </code>
+        <annotations>
+          <_generic/>
+          <_timing>
+            <_timing_weight/>
+            <_timing_avg/>
+            <explanations/>
+          </_timing>
+          <_shifting>
+            <_shifting_type>Duration</_shifting_type>
+          </_shifting>
+          <_context_data_analysis>
+            <probes/>
+            <ips/>
+          </_context_data_analysis>
+          <report>
+            <url/>
+          </report>
+          <_notes>
+            <_notes_general/>
+          </_notes>
+        </annotations>
+        <documentation>
+          <input/>
+          <output/>
+          <implementation>
+            <description/>
+          </implementation>
+          <code>
+            <description/>
+          </code>
+        </documentation>
+      </call>
+      <call id="a8" endpoint="frames_display">
+        <parameters>
+          <label>Show Header</label>
+          <arguments>
+            <type>set</type>
+            <lx>0</lx>
+            <ly>0</ly>
+            <x_amount>5</x_amount>
+            <y_amount>1</y_amount>
+            <button/>
+            <style/>
+            <urls>
+              <urls_item>
+                <lang>de-at</lang>
+                <url>https://cpee.org/form/tum-header.html</url>
+              </urls_item>
+            </urls>
+            <default/>
+          </arguments>
+        </parameters>
+        <code>
+          <prepare/>
+          <finalize output="result"/>
+          <update output="result"/>
+          <rescue output="result"/>
+        </code>
+        <annotations>
+          <_generic/>
+          <_timing>
+            <_timing_weight/>
+            <_timing_avg/>
+            <explanations/>
+          </_timing>
+          <_shifting>
+            <_shifting_type>Duration</_shifting_type>
+          </_shifting>
+          <_context_data_analysis>
+            <probes/>
+            <ips/>
+          </_context_data_analysis>
+          <report>
+            <url/>
+          </report>
+          <_notes>
+            <_notes_general/>
+          </_notes>
+        </annotations>
+        <documentation>
+          <input/>
+          <output/>
+          <implementation>
+            <description/>
+          </implementation>
+          <code>
+            <description/>
+          </code>
+        </documentation>
+      </call>
+      <loop mode="pre_test" condition="true">
+        <call id="a1" endpoint="subprocess">
+          <parameters>
+            <label>Navigate to QR Result</label>
+            <method>:post</method>
+            <arguments>
+              <behavior>wait_running</behavior>
+              <url>!"https://cpee.org/hub/server/Teaching.dir/Prak.dir/TUM-Prak-25-SS.dir/Helling_Isabell.dir/page.dir/" + data.qr['navigate'] + ".xml"</url>
+              <init>
+                <zoom>!data.zoom</zoom>
+                <days_back>!data.days_back</days_back>
+              </init>
+              <endpoints/>
+              <attributes/>
+              <customization/>
+            </arguments>
+          </parameters>
+          <annotations>
+            <_generic/>
+            <_timing>
+              <_timing_weight/>
+              <_timing_avg/>
+              <explanations/>
+            </_timing>
+            <_shifting>
+              <_shifting_type>Duration</_shifting_type>
+            </_shifting>
+            <_context_data_analysis>
+              <probes/>
+              <ips/>
+            </_context_data_analysis>
+            <report>
+              <url/>
+            </report>
+            <_notes>
+              <_notes_general/>
+            </_notes>
+          </annotations>
+          <documentation>
+            <input/>
+            <output/>
+            <implementation>
+              <description/>
+            </implementation>
+          </documentation>
+        </call>
+        <parallel wait="1" cancel="last">
+          <parallel_branch>
+            <call id="a9" endpoint="waitqr">
+              <parameters>
+                <label>Wait for QR Scan</label>
+                <arguments/>
+              </parameters>
+              <code>
+                <prepare/>
+                <finalize output="result">data.qr = result</finalize>
+                <update output="result"/>
+                <rescue output="result"/>
+              </code>
+              <annotations>
+                <_generic/>
+                <_timing>
+                  <_timing_weight/>
+                  <_timing_avg/>
+                  <explanations/>
+                </_timing>
+                <_shifting>
+                  <_shifting_type>Duration</_shifting_type>
+                </_shifting>
+                <_context_data_analysis>
+                  <probes/>
+                  <ips/>
+                </_context_data_analysis>
+                <report>
+                  <url/>
+                </report>
+                <_notes>
+                  <_notes_general/>
+                </_notes>
+              </annotations>
+              <documentation>
+                <input/>
+                <output/>
+                <implementation>
+                  <description/>
+                </implementation>
+                <code>
+                  <description/>
+                </code>
+              </documentation>
+            </call>
+          </parallel_branch>
+          <parallel_branch>
+            <choose mode="exclusive" label="Leave page if no interaction happens">
+              <alternative condition="data.qr['navigate'] != &quot;index&quot;">
+                <call id="a2" endpoint="timeout">
+                  <parameters>
+                    <label>Wait for 3 Minutes</label>
+                    <method>:post</method>
+                    <arguments>
+                      <timeout>3</timeout>
+                    </arguments>
+                  </parameters>
+                  <code>
+                    <prepare/>
+                    <finalize output="result">data.qr = {"navigate":"index"}</finalize>
+                    <update output="result"/>
+                    <rescue output="result"/>
+                  </code>
+                  <annotations>
+                    <_generic/>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                    <code>
+                      <description/>
+                    </code>
+                  </documentation>
+                </call>
+                <_probability>
+                  <_probability_min/>
+                  <_probability_max/>
+                  <_probability_avg/>
+                </_probability>
+              </alternative>
+              <otherwise>
+                <call id="a7" endpoint="timeout">
+                  <parameters>
+                    <label>Wait for 5 Minutes</label>
+                    <method>:post</method>
+                    <arguments>
+                      <timeout>5</timeout>
+                    </arguments>
+                  </parameters>
+                  <code>
+                    <prepare/>
+                    <finalize output="result">data.qr = {"navigate":"end"}</finalize>
+                    <update output="result"/>
+                    <rescue output="result"/>
+                  </code>
+                  <annotations>
+                    <_generic/>
+                    <_timing>
+                      <_timing_weight/>
+                      <_timing_avg/>
+                      <explanations/>
+                    </_timing>
+                    <_shifting>
+                      <_shifting_type>Duration</_shifting_type>
+                    </_shifting>
+                    <_context_data_analysis>
+                      <probes/>
+                      <ips/>
+                    </_context_data_analysis>
+                    <report>
+                      <url/>
+                    </report>
+                    <_notes>
+                      <_notes_general/>
+                    </_notes>
+                  </annotations>
+                  <documentation>
+                    <input/>
+                    <output/>
+                    <implementation>
+                      <description/>
+                    </implementation>
+                    <code>
+                      <description/>
+                    </code>
+                  </documentation>
+                </call>
+              </otherwise>
+            </choose>
+          </parallel_branch>
+        </parallel>
+        <choose mode="exclusive" label="Terminate process if desired">
+          <alternative condition="data.qr['navigate'] == &quot;end&quot;">
+            <_probability>
+              <_probability_min/>
+              <_probability_max/>
+              <_probability_avg/>
+            </_probability>
+            <terminate/>
+          </alternative>
+          <otherwise/>
+        </choose>
+        <manipulate id="a3" label="Update Variables">if data.qr['navigate'] != 'location'
+  data.zoom = 3
+end
+
+if data.qr['navigate'] != 'picture'
+  data.days_back = 0
+end
+
+if data.qr['zoom'] == 'in'
+  data.zoom += 1
+elsif data.qr['zoom'] == 'out'
+  data.zoom -= 1
+end
+data.zoom = [[data.zoom, 10].min, 1].max
+
+if data.qr['days_back'] == 'before'
+  data.days_back += 1
+elsif data.qr['days_back'] == 'after'
+  data.days_back -= 1
+elsif data.qr['days_back'] == 'today'
+  data.days_back = 0
+end
+data.days_back = [data.days_back, 0].max</manipulate>
+        <_probability>
+          <_probability_min>1</_probability_min>
+          <_probability_max>1</_probability_max>
+          <_probability_avg>1</_probability_avg>
+        </_probability>
+      </loop>
+    </description>
+  </description>
+  <transformation>
+    <description type="copy"/>
+    <dataelements type="none"/>
+    <endpoints type="none"/>
+  </transformation>
+</testset>
