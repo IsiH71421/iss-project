@@ -1,0 +1,157 @@
+<testset xmlns="http://cpee.org/ns/properties/2.0">
+  <executionhandler>ruby</executionhandler>
+  <dataelements>
+    <days_back>1</days_back>
+    <result>{"date":"2025-07-06","explanation":"Why is there a spiral around the North Pole of Mars?  Each winter this pole develops a new outer layer about one meter thick composed of carbon dioxide frozen out of the thin Martian atmosphere.  This fresh layer is deposited on a water-ice layer that exists year round.  Strong winds blow down from above the cap's center and swirl due to the spin of the red planet -- contributing to Planum Boreum's spiral structure.  The featured image is a perspective mosaic generated in 2017 from numerous images taken by ESA's Mars Express and elevations extracted from the laser altimeter aboard NASA's Mars Global Surveyor mission.","hdurl":"https://apod.nasa.gov/apod/image/2507/MarsNorthPole_MarsExpress_960.jpg","media_type":"image","service_version":"v1","title":"The Spiral North Pole of Mars","url":"https://apod.nasa.gov/apod/image/2507/MarsNorthPole_MarsExpress_960.jpg"}</result>
+    <params>{"days_back":1,"title":"The Spiral North Pole of Mars","date":"2025-07-06","url":"https://apod.nasa.gov/apod/image/2507/MarsNorthPole_MarsExpress_960.jpg","explanation":"Why is there a spiral around the North Pole of Mars?  Each winter this pole develops a new outer layer about one meter thick composed of carbon dioxide frozen out of the thin Martian atmosphere.  This fresh layer is deposited on a water-ice layer that exists year round.  Strong winds blow down from above the cap's center and swirl due to the spin of the red planet -- contributing to Planum Boreum's spiral structure.  The featured image is a perspective mosaic generated in 2017 from numerous images taken by ESA's Mars Express and elevations extracted from the laser altimeter aboard NASA's Mars Global Surveyor mission."}</params>
+    <params_json>{"days_back":1,"title":"The Spiral North Pole of Mars","date":"2025-07-06","url":"https://apod.nasa.gov/apod/image/2507/MarsNorthPole_MarsExpress_960.jpg","explanation":"Why is there a spiral around the North Pole of Mars?  Each winter this pole develops a new outer layer about one meter thick composed of carbon dioxide frozen out of the thin Martian atmosphere.  This fresh layer is deposited on a water-ice layer that exists year round.  Strong winds blow down from above the cap's center and swirl due to the spin of the red planet -- contributing to Planum Boreum's spiral structure.  The featured image is a perspective mosaic generated in 2017 from numerous images taken by ESA's Mars Express and elevations extracted from the laser altimeter aboard NASA's Mars Global Surveyor mission."}</params_json>
+  </dataelements>
+  <endpoints>
+    <getPicture>https://api.nasa.gov/planetary/apod?api_key=yJXbMcGV5497ZLAUTc3xJisvMoUNPmqYGh3kAqfE&amp;date=2025-07-06</getPicture>
+    <timeout>https://cpee.org/services/timeout.php</timeout>
+    <subprocess>https://cpee.org/flow/start/url/</subprocess>
+    <frames_display>https-put://cpee.org/out/frames/iss/</frames_display>
+    <waitqr>https-get://lehre.bpm.in.tum.de/~ge25fel/iss/waitqr/initiate.php</waitqr>
+  </endpoints>
+  <attributes>
+    <guarded>none</guarded>
+    <modeltype>CPEE</modeltype>
+    <theme>extended</theme>
+    <guarded_id/>
+    <info>picture</info>
+    <creator>Christine Ashcreek</creator>
+    <author>Christine Ashcreek</author>
+    <model_uuid>e4a15909-4674-444c-a82a-647faa4e2a47</model_uuid>
+    <model_version/>
+    <design_dir>Teaching.dir/Prak.dir/TUM-Prak-25-SS.dir/Helling_Isabell.dir/page.dir/</design_dir>
+    <design_stage>development</design_stage>
+  </attributes>
+  <description>
+    <description xmlns="http://cpee.org/ns/description/1.0">
+      <manipulate id="a2" label="Calculate Correct Day">require 'date'
+
+date = Date.today - data.days_back
+date_string = date.strftime('%Y-%m-%d')
+
+api_key = 'yJXbMcGV5497ZLAUTc3xJisvMoUNPmqYGh3kAqfE'
+endpoints.getPicture = "https://api.nasa.gov/planetary/apod?api_key=#{api_key}&amp;date=#{date_string}"</manipulate>
+      <call id="a3" endpoint="getPicture">
+        <parameters>
+          <label>Get Picture</label>
+          <method>:get</method>
+          <arguments/>
+        </parameters>
+        <code>
+          <prepare/>
+          <finalize output="result">data.result = result;
+data.params = {
+days_back: data.days_back,
+title: result['title'],
+date: result['date'],
+url: result['hdurl'] || result['url'],
+explanation: result['explanation']
+};
+data.params_json = JSON.generate(data.params);</finalize>
+          <update output="result"/>
+          <rescue output="result"/>
+        </code>
+        <annotations>
+          <_generic/>
+          <_timing>
+            <_timing_weight/>
+            <_timing_avg/>
+            <explanations/>
+          </_timing>
+          <_shifting>
+            <_shifting_type>Duration</_shifting_type>
+          </_shifting>
+          <_context_data_analysis>
+            <probes/>
+            <ips/>
+          </_context_data_analysis>
+          <report>
+            <url/>
+          </report>
+          <_notes>
+            <_notes_general/>
+          </_notes>
+        </annotations>
+        <documentation>
+          <input/>
+          <output/>
+          <implementation>
+            <description/>
+          </implementation>
+          <code>
+            <description/>
+          </code>
+        </documentation>
+      </call>
+      <call id="a5" endpoint="frames_display">
+        <parameters>
+          <label>Display Picture Page</label>
+          <arguments>
+            <type>set</type>
+            <lx>0</lx>
+            <ly>1</ly>
+            <x_amount>5</x_amount>
+            <y_amount>7</y_amount>
+            <button/>
+            <style/>
+            <urls>
+              <urls_item>
+                <lang>de-at</lang>
+                <url>https://lehre.bpm.in.tum.de/~ge25fel/iss/display/picture.html</url>
+              </urls_item>
+            </urls>
+            <default>
+              <params>!data.params_json</params>
+            </default>
+          </arguments>
+        </parameters>
+        <code>
+          <prepare/>
+          <finalize output="result"/>
+          <update output="result"/>
+          <rescue output="result"/>
+        </code>
+        <annotations>
+          <_generic/>
+          <_timing>
+            <_timing_weight/>
+            <_timing_avg/>
+            <explanations/>
+          </_timing>
+          <_shifting>
+            <_shifting_type>Duration</_shifting_type>
+          </_shifting>
+          <_context_data_analysis>
+            <probes/>
+            <ips/>
+          </_context_data_analysis>
+          <report>
+            <url/>
+          </report>
+          <_notes>
+            <_notes_general/>
+          </_notes>
+        </annotations>
+        <documentation>
+          <input/>
+          <output/>
+          <implementation>
+            <description/>
+          </implementation>
+          <code>
+            <description/>
+          </code>
+        </documentation>
+      </call>
+    </description>
+  </description>
+  <transformation>
+    <description type="copy"/>
+    <dataelements type="none"/>
+    <endpoints type="none"/>
+  </transformation>
+</testset>
