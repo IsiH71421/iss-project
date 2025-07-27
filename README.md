@@ -34,35 +34,35 @@ The repository also includes a demo video, screenshots, and XML models for CPEE 
 ## Project Architecture
 ```
 iss/
-├── 📂 pass_server/                # Backend API Server
-│   └── 📄 pass_service.py        # Flask server for ISS tracking API
-│   └── 📄 de421.bsp                  # JPL planetary ephemeris data for astronomical calculations
-│   └── 📄 passes_cache.json           # Cached ISS pass predictions
+├── 📂 pass_server/             # Backend API Server
+│   └── 📄 pass_service.py      # Flask server for ISS tracking API
+│   └── 📄 de421.bsp            # JPL planetary ephemeris data for astronomical calculations
+│   └── 📄 passes_cache.json    # Cached ISS pass predictions
 │
-├── 📂 waitqr/                         # QR callback service
-│   └── 📄 callback.php             # QR code scan callback handler (receives scan events)
-│   └── 📄 callback.url              # CPEE Callback URL file
-│   └── 📄 initiate.php                   # QR code callback initiation script
+├── 📂 waitqr/                  # QR callback service
+│   └── 📄 callback.php         # QR code scan callback handler (receives scan events)
+│   └── 📄 callback.url         # CPEE Callback URL file
+│   └── 📄 initiate.php         # QR code callback initiation script
 │
-├── 📂 display/                           # Frontend HTML Pages
-│   ├── 📄 index.html                 # Main countdown page
-│   ├── 📄 forecast.html             # Forecast of next 10 passes
-│   ├── 📄 location.html             # ISS position map
-│   ├── 📄 details.html               # Pass details
-│   ├── 📄 picture.html             # NASA Picture of the Day
-│   └── 📄 crew.html                    # ISS crew information
+├── 📂 display/                 # Frontend HTML Pages
+│   ├── 📄 index.html           # Main countdown page
+│   ├── 📄 forecast.html        # Forecast of next 10 passes
+│   ├── 📄 location.html        # ISS position map
+│   ├── 📄 details.html         # Pass details
+│   ├── 📄 picture.html         # NASA Picture of the Day
+│   └── 📄 crew.html            # ISS crew information
 │
-├── 📂 assets/                           # Static resources (CSS, JS, QR codes)
-│   ├──📄 css/style.css              # Stylesheet
-│   ├──📄 js/functions.js          # JavaScript utilities for time formatting
-│   └── 📄 qr_*.png                    # QR code navigation images for touchless operation
+├── 📂 assets/                  # Static resources (CSS, JS, QR codes)
+│   ├──📄 css/style.css         # Stylesheet
+│   ├──📄 js/functions.js       # JavaScript utilities for time formatting
+│   └── 📄 qr_*.png             # QR code navigation images for touchless operation
 │
-├── 📂 documentation/                 # Documentation and workflow models
-│   ├── 📂 cpee_models                 # CPEE workflow models (SVG and XML files)
-│   ├── 📄 Demo-Video.mkv          # Video demonstration of system functionality
-│   ├── 📄 Screenshots.pdf           # Visual documentation with UI screenshots
-├── 📄 README.md                      # This file
-├── 📄 LICENSE                              # License
+├── 📂 documentation/           # Documentation and workflow models
+│   ├── 📂 cpee_models          # CPEE workflow models (SVG and XML files)
+│   ├── 📄 Demo-Video.mkv       # Video demonstration of system functionality
+│   ├── 📄 Screenshots.pdf      # Visual documentation with UI screenshots
+├── 📄 README.md                # This file
+├── 📄 LICENSE                  # License
 ```
 
 ### Backend Services
