@@ -37,12 +37,12 @@ iss/
 ├── 📂 pass_server/                # Backend API Server
 │   └── 📄 pass_service.py        # Flask server for ISS tracking API
 │   └── 📄 de421.bsp                  # JPL planetary ephemeris data for astronomical calculations
-└── 📄 passes_cache.json           # Cached ISS pass predictions
+│   └── 📄 passes_cache.json           # Cached ISS pass predictions
 │
 ├── 📂 waitqr/                         # QR callback service
 │   └── 📄 callback.php             # QR code scan callback handler (receives scan events)
 │   └── 📄 callback.url              # CPEE Callback URL file
-└── 📄 initiate.php                   # QR code callback initiation script
+│   └── 📄 initiate.php                   # QR code callback initiation script
 │
 ├── 📂 display/                           # Frontend HTML Pages
 │   ├── 📄 index.html                 # Main countdown page
