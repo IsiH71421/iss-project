@@ -137,6 +137,7 @@ Example response:
   "brightness_estimate": "bright",
   "distance_km": 687.4
 }
+```
 
 **Upcoming Passes**: `GET /passes?days=7`
 **Parameters:**
