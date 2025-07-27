@@ -120,7 +120,7 @@ Implemented in `pass_server/pass_service.py` using:
 
 **Next pass:** `GET /next_pass`
 
-Example response:
+**Example Response:**
 
 ```json
 {
@@ -140,8 +140,10 @@ Example response:
 ```
 
 **Upcoming Passes**: `GET /passes?days=7`
+
 **Parameters:**
 - `days` (optional): Number of days (1-7, default: 7)
+
 **Example Response:**
 ```json
 [
