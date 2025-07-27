@@ -32,11 +32,12 @@ The repository also includes a demo video, screenshots, and XML models for CPEE 
 ---
 
 ## Project Architecture
+```
 iss/
 ├── 📂 pass_server/                # Backend API Server
 │   └── 📄 pass_service.py        # Flask server for ISS tracking API
 │   └── 📄 de421.bsp                  # JPL planetary ephemeris data for astronomical calculations
-└── 📄 passes_cache.j               # Cached ISS pass predictions
+└── 📄 passes_cache.json           # Cached ISS pass predictions
 │
 ├── 📂 waitqr/                         # QR callback service
 │   └── 📄 callback.php             # QR code scan callback handler (receives scan events)
@@ -62,6 +63,7 @@ iss/
 │   ├── 📄 Screenshots.pdf           # Visual documentation with UI screenshots
 ├── 📄 README.md                      # This file
 ├── 📄 LICENSE                              # License
+```
 
 ### Backend Services
 - `pass_server/`: ISS orbit calculations and API (Python/Flask)
